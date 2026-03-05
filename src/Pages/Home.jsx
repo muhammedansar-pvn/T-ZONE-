@@ -4,10 +4,14 @@ import { motion } from "framer-motion";
 import { useEffect, useState, useContext, useRef } from "react";
 import axios from "axios";
 import { SearchContext } from "../Context/SearchContext";
+import { AuthContext } from "../Context/AuthContext";
+
+const API_URL = "http://localhost:5000/products";
 
 const Home = () => {
   const navigate = useNavigate();
   const { searchTerm = "" } = useContext(SearchContext);
+  const { isAdmin } = useContext(AuthContext);
 
   const [allProducts, setAllProducts] = useState([]);
   const [featured, setFeatured] = useState([]);
@@ -16,26 +20,32 @@ const Home = () => {
 
   const productSectionRef = useRef(null);
 
-  // Fetch Products
+  /* ===============================
+     FETCH PRODUCTS
+  ================================ */
   useEffect(() => {
-    axios
-      .get("http://localhost:5000/watches")
-      .then((res) => {
+    const fetchProducts = async () => {
+      try {
+        const res = await axios.get(API_URL);
         setAllProducts(res.data);
         setFeatured(res.data.slice(0, 3));
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.log(err);
+      } catch (err) {
+        console.error("Product Fetch Error:", err);
         setError("Failed to load products.");
+      } finally {
         setLoading(false);
-      });
+      }
+    };
+
+    fetchProducts();
   }, []);
 
-  // Auto Scroll when searching
+  /* ===============================
+     AUTO SCROLL ON SEARCH
+  ================================ */
   useEffect(() => {
     if (searchTerm && productSectionRef.current) {
-      const yOffset = -80; // adjust if navbar height changes
+      const yOffset = -80;
       const y =
         productSectionRef.current.getBoundingClientRect().top +
         window.pageYOffset +
@@ -45,10 +55,11 @@ const Home = () => {
     }
   }, [searchTerm]);
 
-  // Filter Products
-  const filteredProducts = allProducts.filter((watch) =>
-    watch.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    watch.description?.toLowerCase().includes(searchTerm.toLowerCase())
+  /* ===============================
+     FILTER PRODUCTS
+  ================================ */
+  const filteredProducts = allProducts.filter((product) =>
+    product.name?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const productsToShow = searchTerm ? filteredProducts : featured;
@@ -56,9 +67,24 @@ const Home = () => {
   return (
     <div className="bg-white dark:bg-black text-black dark:text-white transition-colors duration-300">
 
-      {/* ================= HERO SECTION ================= */}
-      <div className="relative h-screen overflow-hidden">
+      {/* ===============================
+         ADMIN QUICK ACCESS BUTTON
+      ================================ */}
+      {isAdmin && (
+        <div className="fixed top-5 right-5 z-50">
+          <button
+            onClick={() => navigate("/admin")}
+            className="bg-yellow-500 text-black px-5 py-2 rounded-full font-semibold shadow-lg hover:scale-105 transition duration-300"
+          >
+            Go to Admin Panel
+          </button>
+        </div>
+      )}
 
+      {/* ===============================
+         HERO SECTION
+      ================================ */}
+      <div className="relative h-screen overflow-hidden">
         <video
           autoPlay
           muted
@@ -85,17 +111,16 @@ const Home = () => {
           <p className="mt-6 text-gray-200 text-lg md:text-xl">
             Time Defines Your Style
           </p>
-             {/* Animated Tagline */}
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1, duration: 1 }}
-          className="text-xl md:text-2xl mb-8 text-gray-200"
-        >
-          Every Second Tells a Story.
-        </motion.p>
 
-        
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1, duration: 1 }}
+            className="text-xl md:text-2xl mb-8 text-gray-200"
+          >
+            Every Second Tells a Story.
+          </motion.p>
+
           <button
             onClick={() => navigate("/watches")}
             className="mt-10 bg-gradient-to-r from-yellow-400 to-yellow-600 text-black px-10 py-4 rounded-full font-bold hover:scale-105 transition duration-300 shadow-2xl"
@@ -105,7 +130,9 @@ const Home = () => {
         </motion.div>
       </div>
 
-      {/*  PRODUCTS SECTION  */}
+      {/* ===============================
+         PRODUCTS SECTION
+      ================================ */}
       <section ref={productSectionRef} className="py-24 px-6">
         <div className="max-w-7xl mx-auto text-center">
 
@@ -113,60 +140,71 @@ const Home = () => {
             {searchTerm ? (
               <>
                 Search Results for{" "}
-                <span className="text-yellow-500">"{searchTerm}"</span>
+                <span className="text-yellow-500">
+                  "{searchTerm}"
+                </span>
               </>
             ) : (
               <>
-                Featured <span className="text-yellow-500">Watches</span>
+                Featured{" "}
+                <span className="text-yellow-500">
+                  Products
+                </span>
               </>
             )}
           </h2>
 
           {loading && (
             <p className="text-gray-400 text-lg animate-pulse">
-              Loading watches...
+              Loading products...
             </p>
           )}
 
           {error && (
-            <p className="text-red-500 text-lg">{error}</p>
+            <p className="text-red-500 text-lg">
+              {error}
+            </p>
           )}
 
           {!loading && !error && productsToShow.length === 0 && (
-            <p className="text-gray-400 text-lg">No watches found.</p>
+            <p className="text-gray-400 text-lg">
+              No products found.
+            </p>
           )}
 
           {!loading && !error && productsToShow.length > 0 && (
             <div className="grid md:grid-cols-3 gap-10">
-              {productsToShow.map((watch, index) => (
+              {productsToShow.map((product, index) => (
                 <motion.div
-                  key={watch.id}
+                  key={product.id}
                   initial={{ opacity: 0, y: 30 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.1 }}
-                  onClick={() => navigate(`/product/${watch.id}`)}
-                  className="cursor-pointer bg-white/5 dark:bg-white/5 backdrop-blur-lg rounded-2xl overflow-hidden border border-yellow-500/20 hover:scale-105 transition duration-500 shadow-lg"
+                  onClick={() =>
+                    navigate(`/product/${product.id}`)
+                  }
+                  className="cursor-pointer bg-white/5 backdrop-blur-lg rounded-2xl overflow-hidden border border-yellow-500/20 hover:scale-105 transition duration-500 shadow-lg"
                 >
                   <img
-                    src={watch.image}
-                    alt={watch.name}
+                    src={product.image || product.images?.[0]}
+                    alt={product.name}
                     className="w-full h-80 object-cover"
                   />
                   <div className="p-6">
                     <h3 className="text-xl font-semibold text-yellow-400">
-                      {watch.name}
+                      {product.name}
                     </h3>
                     <p className="text-gray-400 mt-2">
-                      ₹ {watch.price}
+                      ₹ {product.price}
                     </p>
                   </div>
                 </motion.div>
               ))}
             </div>
           )}
+
         </div>
       </section>
-
     </div>
   );
 };

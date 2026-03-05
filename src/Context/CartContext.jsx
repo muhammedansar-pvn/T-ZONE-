@@ -1,70 +1,118 @@
-import { createContext, useState, useEffect } from "react";
+import { createContext, useState, useEffect, useContext } from "react";
+import { AuthContext } from "./AuthContext";
 
 export const CartContext = createContext();
 
 export const CartProvider = ({ children }) => {
-  const [cart, setCart] = useState(() => {
-    return JSON.parse(localStorage.getItem("cart")) || [];
-  });
+  const { user } = useContext(AuthContext);
 
-  //  Sync with localStorage
+  // 🔥 Dynamic Key Based On User
+  const getCartKey = () => {
+    return user ? `cart_${user.id}` : null;
+  };
+
+  // ✅ Load Cart Based On Logged User
+  const [cart, setCart] = useState([]);
+
   useEffect(() => {
-    localStorage.setItem("cart", JSON.stringify(cart));
-  }, [cart]);
+    if (!user) {
+      setCart([]); // 🚀 Clear when logout
+      return;
+    }
 
-  //  Add to Cart (Professional Version)
+    try {
+      const storedCart = localStorage.getItem(getCartKey());
+      setCart(storedCart ? JSON.parse(storedCart) : []);
+    } catch {
+      setCart([]);
+    }
+  }, [user]);
+
+  // ✅ Sync Cart To LocalStorage
+  useEffect(() => {
+    if (user) {
+      localStorage.setItem(getCartKey(), JSON.stringify(cart));
+    }
+  }, [cart, user]);
+
+  // ================= ADD TO CART =================
   const addToCart = (product) => {
+    if (!user) {
+      alert("Please login first");
+      return;
+    }
+
     setCart((prevCart) => {
-      const existing = prevCart.find(
-        (item) => item.id === product.id
-      );
+      const existing = prevCart.find((item) => item.id === product.id);
+      const requestedQty = product.quantity || 1;
+
+      if (product.stock <= 0) {
+        alert("Out of Stock");
+        return prevCart;
+      }
 
       if (existing) {
+        const newQuantity = existing.quantity + requestedQty;
+
+        if (newQuantity > product.stock) {
+          alert(`Only ${product.stock} items available`);
+          return prevCart;
+        }
+
         return prevCart.map((item) =>
           item.id === product.id
-            ? {
-                ...item,
-                quantity:
-                  item.quantity + (product.quantity || 1),
-              }
+            ? { ...item, quantity: newQuantity }
             : item
         );
-      } else {
-        return [
-          ...prevCart,
-          {
-            ...product,
-            quantity: product.quantity || 1,
-          },
-        ];
       }
+
+      if (requestedQty > product.stock) {
+        alert(`Only ${product.stock} items available`);
+        return prevCart;
+      }
+
+      return [...prevCart, { ...product, quantity: requestedQty }];
     });
   };
 
-  //  Remove
+  // ================= REMOVE =================
   const removeFromCart = (id) => {
-    setCart((prevCart) =>
-      prevCart.filter((item) => item.id !== id)
-    );
+    setCart((prev) => prev.filter((item) => item.id !== id));
   };
 
-  //  Update Quantity
+  // ================= UPDATE =================
   const updateQuantity = (id, newQuantity) => {
     if (newQuantity < 1) return;
 
-    setCart((prevCart) =>
-      prevCart.map((item) =>
-        item.id === id
-          ? { ...item, quantity: newQuantity }
-          : item
-      )
+    setCart((prev) =>
+      prev.map((item) => {
+        if (item.id === id) {
+          if (newQuantity > item.stock) {
+            alert(`Only ${item.stock} items available`);
+            return item;
+          }
+          return { ...item, quantity: newQuantity };
+        }
+        return item;
+      })
     );
   };
 
-  //  Clear Cart (after checkout)
+  // ================= CLEAR =================
   const clearCart = () => {
+    if (user) {
+      localStorage.removeItem(getCartKey());
+    }
     setCart([]);
   };
+
+  // ================= TOTALS =================
+  const totalItems = cart.reduce((acc, item) => acc + item.quantity, 0);
+
+  const totalPrice = cart.reduce(
+    (acc, item) => acc + item.price * item.quantity,
+    0
+  );
 
   return (
     <CartContext.Provider
@@ -74,6 +122,8 @@ export const CartProvider = ({ children }) => {
         removeFromCart,
         updateQuantity,
         clearCart,
+        totalItems,
+        totalPrice,
       }}
     >
       {children}

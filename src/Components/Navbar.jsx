@@ -3,9 +3,24 @@ import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { AuthContext } from "../Context/AuthContext";
 import { SearchContext } from "../Context/SearchContext";
 import { CartContext } from "../Context/CartContext";
+import { WishlistContext } from "../Context/WishlistContext";
 import { ThemeContext } from "../Context/ThemeContext";
-import { HiMenu, HiX } from "react-icons/hi";
-import { FaUserCircle, FaMoon, FaSun } from "react-icons/fa";
+
+import {
+  HiMenu,
+  HiX,
+  HiHome,
+  HiShoppingBag,
+  HiHeart,
+} from "react-icons/hi";
+
+import {
+  FaUserCircle,
+  FaMoon,
+  FaSun,
+  FaShoppingCart,
+} from "react-icons/fa";
+
 import logoimage from "../assets/images/log.png";
 
 const Navbar = () => {
@@ -15,6 +30,7 @@ const Navbar = () => {
   const { user, logout } = useContext(AuthContext);
   const { setSearchTerm } = useContext(SearchContext);
   const { cart } = useContext(CartContext);
+  const { wishlist } = useContext(WishlistContext);
   const { dark, toggleTheme } = useContext(ThemeContext);
 
   const [menuOpen, setMenuOpen] = useState(false);
@@ -22,71 +38,110 @@ const Navbar = () => {
   const [input, setInput] = useState("");
   const profileRef = useRef();
 
-  // Close profile dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (profileRef.current && !profileRef.current.contains(e.target)) {
         setProfileOpen(false);
       }
     };
-
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const linkBase =
-    "hover:text-[#D4AF37] transition duration-300 text-[11px] tracking-[2px] uppercase";
+  const linkStyle =
+    "relative flex items-center justify-center text-xl text-gray-800 dark:text-white hover:text-[#D4AF37] dark:hover:text-[#D4AF37] transition-all duration-300 hover:scale-110";
 
-  const activeLink = "text-[#D4AF37]";
+  const activeStyle =
+    "text-[#D4AF37] drop-shadow-[0_0_6px_#D4AF37]";
 
   return (
-    <nav className="relative sticky top-0 z-50 bg-white dark:bg-[#0A0A0D] text-black dark:text-white backdrop-blur-md px-6 md:px-10 py-3 flex justify-between items-center border-b border-gray-200 dark:border-[#1A1A1F] transition-colors duration-300">
+    <nav className="sticky top-0 z-50 backdrop-blur-xl bg-white/70 dark:bg-[#0A0A0D]/80 border-b border-gray-200 dark:border-[#1A1A1F] shadow-sm px-6 md:px-12 py-3 flex justify-between items-center transition-all duration-300">
 
-      {/* Logo */}
-      <img
-        src={logoimage}
-        alt="Logo"
-        onClick={() => navigate("/")}
-        className="w-16 md:w-20 cursor-pointer object-contain"
-      />
+      {/* LEFT SIDE → Logo + Search */}
+      <div className="flex items-center gap-6">
 
-      {/* Desktop Links */}
-      <div className="hidden md:flex gap-8 items-center font-light">
+        {/* Logo */}
+        <img
+          src={logoimage}
+          alt="Logo"
+          onClick={() => navigate("/")}
+          className="w-16 md:w-20 cursor-pointer object-contain hover:scale-105 transition"
+        />
+
+        {/* Search */}
+        <div className="hidden md:block">
+          <input
+            type="text"
+            placeholder="Search watches..."
+            value={input}
+            onChange={(e) => {
+              const value = e.target.value;
+              setInput(value);
+              setSearchTerm(value);
+              if (location.pathname !== "/") navigate("/");
+            }}
+            className="px-4 py-2 text-sm rounded-full bg-gray-100 dark:bg-[#141418] text-black dark:text-white border border-gray-300 dark:border-[#222228] focus:border-[#D4AF37] outline-none transition w-56"
+          />
+        </div>
+
+      </div>
+
+      {/* RIGHT SIDE → All Icons */}
+      <div className="flex items-center gap-6">
+
+        {/* Home */}
         <NavLink
           to="/"
           className={({ isActive }) =>
-            isActive ? `${linkBase} ${activeLink}` : linkBase
+            isActive ? `${linkStyle} ${activeStyle}` : linkStyle
           }
         >
-          Home
+          <HiHome />
         </NavLink>
 
+        {/* Watches */}
         <NavLink
           to="/watches"
           className={({ isActive }) =>
-            isActive ? `${linkBase} ${activeLink}` : linkBase
+            isActive ? `${linkStyle} ${activeStyle}` : linkStyle
           }
         >
-          Watches
+          <HiShoppingBag />
         </NavLink>
 
+        {/* Wishlist */}
         <NavLink
-          to="/cart"
+          to="/wishlist"
           className={({ isActive }) =>
-            isActive ? `${linkBase} ${activeLink}` : linkBase
+            isActive ? `${linkStyle} ${activeStyle}` : linkStyle
           }
         >
           <div className="relative">
-            Cart
-            <span className="absolute -top-2 -right-4 bg-[#D4AF37] text-black text-[9px] px-1.5 rounded-full">
-              {/* {cart.length} */}
-            </span>
+            <HiHeart />
+            {user && wishlist.length > 0 && (
+              <span className="absolute -top-2 -right-2 bg-[#D4AF37] text-black text-[10px] w-5 h-5 flex items-center justify-center rounded-full font-bold shadow-md">
+                {wishlist.length}
+              </span>
+            )}
           </div>
         </NavLink>
-      </div>
 
-      {/* Right Section */}
-      <div className="flex items-center gap-4 relative">
+        {/* Cart */}
+        <NavLink
+          to="/cart"
+          className={({ isActive }) =>
+            isActive ? `${linkStyle} ${activeStyle}` : linkStyle
+          }
+        >
+          <div className="relative">
+            <FaShoppingCart />
+            {cart.length > 0 && (
+              <span className="absolute -top-2 -right-2 bg-[#D4AF37] text-black text-[10px] w-5 h-5 flex items-center justify-center rounded-full font-bold shadow-md">
+                {cart.length}
+              </span>
+            )}
+          </div>
+        </NavLink>
 
         {/* Theme Toggle */}
         <button
@@ -96,30 +151,11 @@ const Navbar = () => {
           {dark ? <FaSun /> : <FaMoon />}
         </button>
 
-        {/* Live Search */}
-        <div className="relative hidden md:block">
-          <input
-            type="text"
-            placeholder="Search watches..."
-            value={input}
-            onChange={(e) => {
-              const value = e.target.value;
-              setInput(value);
-              setSearchTerm(value);
-
-              if (location.pathname !== "/") {
-                navigate("/");
-              }
-            }}
-            className="px-3 py-1 text-xs rounded-full bg-gray-100 dark:bg-[#141418] text-black dark:text-white border border-gray-300 dark:border-[#222228] focus:border-[#D4AF37] outline-none transition w-40"
-          />
-        </div>
-
-        {/* User Section */}
+        {/* User */}
         {!user ? (
           <button
             onClick={() => navigate("/login")}
-            className="text-[11px] border border-[#D4AF37] text-[#D4AF37] px-3 py-1 rounded-full hover:bg-[#D4AF37] hover:text-black transition duration-300"
+            className="text-xs border border-[#D4AF37] text-[#D4AF37] px-4 py-1.5 rounded-full hover:bg-[#D4AF37] hover:text-black transition-all duration-300"
           >
             Login
           </button>
@@ -133,7 +169,8 @@ const Navbar = () => {
             </button>
 
             {profileOpen && (
-              <div className="absolute right-0 mt-2 w-40 bg-white dark:bg-[#141418] border border-gray-200 dark:border-[#222228] rounded-lg shadow-lg py-2 text-sm">
+              <div className="absolute right-0 mt-3 w-48 bg-white dark:bg-[#141418] border border-gray-200 dark:border-[#222228] rounded-xl shadow-xl py-2 text-sm text-gray-800 dark:text-white">
+
                 <button
                   onClick={() => {
                     navigate("/profile");
@@ -164,6 +201,7 @@ const Navbar = () => {
                 >
                   Logout
                 </button>
+
               </div>
             )}
           </div>
@@ -176,48 +214,32 @@ const Navbar = () => {
         >
           {menuOpen ? <HiX /> : <HiMenu />}
         </button>
+
       </div>
 
-      {/* Mobile Dropdown Menu */}
+      {/* Mobile Dropdown */}
       {menuOpen && (
-        <div className="absolute top-full left-0 w-full bg-white dark:bg-[#0A0A0D] border-t border-gray-200 dark:border-[#1A1A1F] md:hidden flex flex-col items-center gap-6 py-6 text-sm tracking-[2px] uppercase z-40">
+        <div className="absolute top-full left-0 w-full backdrop-blur-xl bg-white/90 dark:bg-[#0A0A0D]/90 border-t border-gray-200 dark:border-[#1A1A1F] md:hidden flex flex-col items-center gap-6 py-6 text-lg z-40">
 
-          <NavLink
-            to="/"
-            onClick={() => setMenuOpen(false)}
-            className={({ isActive }) =>
-              isActive ? `${linkBase} ${activeLink}` : linkBase
-            }
-          >
+          <NavLink to="/" onClick={() => setMenuOpen(false)}>
             Home
           </NavLink>
 
-          <NavLink
-            to="/watches"
-            onClick={() => setMenuOpen(false)}
-            className={({ isActive }) =>
-              isActive ? `${linkBase} ${activeLink}` : linkBase
-            }
-          >
+          <NavLink to="/watches" onClick={() => setMenuOpen(false)}>
             Watches
           </NavLink>
 
-          <NavLink
-            to="/cart"
-            onClick={() => setMenuOpen(false)}
-            className={({ isActive }) =>
-              isActive ? `${linkBase} ${activeLink}` : linkBase
-            }
-          >
-            <div className="relative">
-              Cart
-              <span className="absolute -top-2 -right-4 bg-[#D4AF37] text-black text-[9px] px-1.5 rounded-full">
-                {cart.length}
-              </span>
-            </div>
+          <NavLink to="/wishlist" onClick={() => setMenuOpen(false)}>
+            Wishlist
           </NavLink>
+
+          <NavLink to="/cart" onClick={() => setMenuOpen(false)}>
+            Cart
+          </NavLink>
+
         </div>
       )}
+
     </nav>
   );
 };

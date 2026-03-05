@@ -1,201 +1,173 @@
-import { getOrders, cancelOrder } from "../services/orderService";
-import { useContext, useState, useEffect } from "react";
+import { useContext, useEffect, useState, useMemo } from "react";
 import { AuthContext } from "../Context/AuthContext";
+import { useNavigate } from "react-router-dom";
+import OrderCard from "../Components/orders/OrderCard";
+import { useOrders } from "../hooks/useOrder";
 
 const Orders = () => {
   const { user } = useContext(AuthContext);
-  const [orders, setOrders] = useState([]);
-  const [expandedOrder, setExpandedOrder] = useState(null);
+  const navigate = useNavigate();
 
+  const {
+    orders = [],
+    loading,
+    error,
+    cancelFullOrder,
+    returnOrder,
+    cancelItem,
+    refreshOrders,
+  } = useOrders(user);
+
+  const [search, setSearch] = useState("");
+  const [filter, setFilter] = useState("All");
+  const [sort, setSort] = useState("Newest");
+
+  //  Protect Route
   useEffect(() => {
-    const userOrders = getOrders().filter(
-      (order) => order.userEmail === user?.email
+    if (!user) {
+      navigate("/login");
+    }
+  }, [user, navigate]);
+
+  //  Calculate Order Total
+  const getOrderTotal = (order) => {
+    return (order?.products || []).reduce((sum, product) => {
+      return sum + Number(product.price) * Number(product.quantity);
+    }, 0);
+  };
+
+  //  Filtering + Sorting Logic
+  const filteredOrders = useMemo(() => {
+    let filtered = [...orders];
+
+    // Filter by Order Status
+    if (filter !== "All") {
+      filtered = filtered.filter(
+        (order) =>
+          order?.status?.toLowerCase() ===
+          filter.toLowerCase()
+      );
+    }
+
+    // Search by Order ID
+    if (search.trim()) {
+      filtered = filtered.filter((order) =>
+        order?.id
+          ?.toLowerCase()
+          .includes(search.toLowerCase())
+      );
+    }
+
+    // Sorting (No mutation bug)
+    if (sort === "Oldest") {
+      filtered = [...filtered].sort(
+        (a, b) =>
+          new Date(a.createdAt) -
+          new Date(b.createdAt)
+      );
+    }
+
+    if (sort === "Newest") {
+      filtered = [...filtered].sort(
+        (a, b) =>
+          new Date(b.createdAt) -
+          new Date(a.createdAt)
+      );
+    }
+
+    return filtered;
+  }, [orders, search, filter, sort]);
+
+  //  Loading State
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-black text-white flex items-center justify-center">
+        <p className="text-lg">Loading Orders...</p>
+      </div>
     );
-    setOrders(userOrders);
-  }, [user]);
+  }
 
-  const refreshOrders = () => {
-    const updatedOrders = getOrders().filter(
-      (order) => order.userEmail === user?.email
+  //  Error State
+  if (error) {
+    return (
+      <div className="min-h-screen bg-black text-white flex items-center justify-center">
+        <p className="text-red-500">{error}</p>
+      </div>
     );
-    setOrders(updatedOrders);
-  };
-
-  const handleCancel = (id) => {
-    if (window.confirm("Cancel this order?")) {
-      cancelOrder(id);
-      refreshOrders();
-    }
-  };
-
-  const handleReturn = (id) => {
-    alert("Return request submitted!");
-  };
-
-  const handleRate = () => {
-    const rating = prompt("Rate this order (1-5)");
-    if (rating) alert("Thanks for rating ");
-  };
-
-  const getStatusStyle = (status) => {
-    switch (status) {
-      case "Delivered":
-        return "bg-green-600";
-      case "Shipped":
-      case "Out for Delivery":
-        return "bg-blue-600";
-      case "Processing":
-      case "Placed":
-        return "bg-yellow-500 text-black";
-      case "Cancelled":
-        return "bg-red-600";
-      default:
-        return "bg-gray-600";
-    }
-  };
-
-  const getProgressWidth = (status) => {
-    switch (status) {
-      case "Placed":
-        return "25%";
-      case "Processing":
-        return "40%";
-      case "Shipped":
-        return "60%";
-      case "Out for Delivery":
-        return "80%";
-      case "Delivered":
-        return "100%";
-      default:
-        return "0%";
-    }
-  };
+  }
 
   return (
-    <div className="min-h-screen bg-black text-white p-10">
-      <h1 className="text-3xl font-bold mb-8 text-yellow-500">
-        My Orders
-      </h1>
+    <div className="min-h-screen bg-black text-white px-6 md:px-16 py-10">
+      <div className="max-w-7xl mx-auto">
 
-      {orders.length === 0 ? (
-        <p>No orders found.</p>
-      ) : (
-        orders.map((order) => (
-          <div
-            key={order.id}
-            className="bg-gray-900 p-6 rounded-xl mb-6 shadow-lg"
+        {/* HEADER */}
+        <h1 className="text-4xl font-bold text-yellow-500 mb-8">
+          Order History
+        </h1>
+
+        {/* FILTER SECTION */}
+        <div className="flex flex-wrap gap-4 mb-8">
+
+          {/* Search */}
+          <input
+            type="text"
+            placeholder="Search Order ID..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="bg-gray-800 px-4 py-2 rounded-lg outline-none"
+          />
+
+          {/* Status Filter */}
+          <select
+            value={filter}
+            onChange={(e) => setFilter(e.target.value)}
+            className="bg-gray-800 px-4 py-2 rounded-lg outline-none"
           >
-            <div className="flex justify-between items-center">
-              <div>
-                <p className="text-sm text-gray-400">
-                  Date: {order.date}
-                </p>
+            <option value="All">All</option>
+            <option value="Placed">Placed</option>
+            <option value="Processing">Processing</option>
+            <option value="Shipped">Shipped</option>
+            <option value="Out for Delivery">
+              Out for Delivery
+            </option>
+            <option value="Delivered">Delivered</option>
+            <option value="Cancelled">Cancelled</option>
+          </select>
 
-                <span
-                  className={`inline-block mt-2 px-3 py-1 text-sm rounded-full ${getStatusStyle(
-                    order.status
-                  )}`}
-                >
-                  {order.status}
-                </span>
+          {/* Sort */}
+          <select
+            value={sort}
+            onChange={(e) => setSort(e.target.value)}
+            className="bg-gray-800 px-4 py-2 rounded-lg outline-none"
+          >
+            <option value="Newest">Newest</option>
+            <option value="Oldest">Oldest</option>
+          </select>
+        </div>
 
-                <p className="mt-2 font-semibold">
-                  Total: ₹ {order.total}
-                </p>
+        {/* ORDERS LIST */}
+        <div className="space-y-6">
 
-                {/* Progress Bar */}
-                {order.status !== "Cancelled" && (
-                  <div className="mt-3 bg-gray-700 h-2 rounded">
-                    <div
-                      className="bg-yellow-500 h-2 rounded"
-                      style={{ width: getProgressWidth(order.status) }}
-                    ></div>
-                  </div>
-                )}
-              </div>
-
-              <div className="flex gap-2 flex-wrap">
-
-                {/* View */}
-                <button
-                  onClick={() =>
-                    setExpandedOrder(
-                      expandedOrder === order.id
-                        ? null
-                        : order.id
-                    )
-                  }
-                  className="bg-gray-700 hover:bg-gray-600 px-3 py-2 rounded-lg"
-                >
-                  {expandedOrder === order.id
-                    ? "Hide"
-                    : "View"}
-                </button>
-
-                {/* Cancel */}
-                {(order.status === "Placed" ||
-                  order.status === "Processing") && (
-                  <button
-                    onClick={() => handleCancel(order.id)}
-                    className="bg-red-600 hover:bg-red-700 px-3 py-2 rounded-lg"
-                  >
-                    Cancel
-                  </button>
-                )}
-
-                {/* Track */}
-                {(order.status === "Shipped" ||
-                  order.status === "Out for Delivery") && (
-                  <button
-                    onClick={() =>
-                      alert("Tracking ID: TZ" + order.id)
-                    }
-                    className="bg-blue-600 hover:bg-blue-700 px-3 py-2 rounded-lg"
-                  >
-                    Track
-                  </button>
-                )}
-
-                {/* Return */}
-                {order.status === "Delivered" && (
-                  <>
-                    <button
-                      onClick={() => handleReturn(order.id)}
-                      className="bg-orange-500 hover:bg-orange-600 px-3 py-2 rounded-lg"
-                    >
-                      Return
-                    </button>
-
-                    <button
-                      onClick={handleRate}
-                      className="bg-purple-600 hover:bg-purple-700 px-3 py-2 rounded-lg"
-                    >
-                      Rate
-                    </button>
-                  </>
-                )}
-              </div>
+          {filteredOrders.length === 0 ? (
+            <div className="text-center py-20 text-gray-500">
+              No Orders Found
             </div>
+          ) : (
+            filteredOrders.map((order) => (
+              <OrderCard
+                key={order?.id}
+                order={order}
+                orderTotal={getOrderTotal(order)}
+                onCancelOrder={cancelFullOrder}
+                onReturnOrder={returnOrder}
+                onCancelItem={cancelItem}
+                onPaymentSuccess={refreshOrders}
+              />
+            ))
+          )}
 
-            {/* Items */}
-            {expandedOrder === order.id && (
-              <div className="mt-4 border-t border-gray-700 pt-4">
-                {order.items.map((item) => (
-                  <div
-                    key={item.id}
-                    className="flex justify-between py-2"
-                  >
-                    <span>{item.name}</span>
-                    <span>
-                      {item.quantity} x ₹ {item.price}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        ))
-      )}
+        </div>
+      </div>
     </div>
   );
 };

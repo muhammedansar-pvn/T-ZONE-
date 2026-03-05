@@ -1,174 +1,499 @@
 {
   "users": [
     {
-      "id": "41b5",
-      "name": "MUHAMMAD ANSAR",
-      "email": "ansarbin@gmail.com",
-      "password": "ansar75",
+      "id": "1",
+      "name": "Admin",
+      "email": "admin@gmail.com",
+      "password": "admin123",
+      "role": "admin",
+      "isBlocked": false
+    },
+    {
+      "id": "89f6",
+      "name": "sumi",
+      "email": "sumi@gmail.com",
+      "password": "098765",
+      "mobile": "8907654321",
+      "address": "fkjdvjkvdvkejvnev",
+      "isBlocked": true,
+      "role": "user",
+      "createdAt": "2026-02-28T04:19:39.042Z"
+    },
+    {
+      "id": "eb60",
+      "name": "MUHAMMAD shihab",
+      "email": "shiahab@gmail.com",
+      "password": "12345678",
       "mobile": "7994050309",
-      "address": "CHEKKINTE PURAKKAL  H"
+      "address": "CHEKKINTE PURAKKAL  H",
+      "isBlocked": false,
+      "role": "user",
+      "createdAt": "2026-02-28T05:33:34.366Z"
+    },
+    {
+      "id": "b5ac",
+      "name": "Ansar",
+      "email": "ansarbinkunhimarakar@gmail.com",
+      "password": "",
+      "mobile": "",
+      "address": "",
+      "role": "user",
+      "googleUser": true,
+      "isBlocked": false
     }
   ],
-  "watches": [
+  "products": [
     {
-      "id":"1",
-      "name": "Rolex Submariner",
-      "brand": "Rolex",
-      "price": 750000,
-      "category": "Luxury",
-      "image": "https://images.unsplash.com/photo-1524592094714-0f0654e20314?w=400&auto=format&fit=crop&q=80"
+      "name": "rado",
+      "price": 30000,
+      "category": "luxury",
+      "images": [
+        "https://i.pinimg.com/736x/d7/b1/70/d7b170bf4000eebcbf898a02b79e7609.jpg",
+        "https://i.pinimg.com/736x/8d/4e/39/8d4e39dc2177476ac12f52c11d13fa8f.jpg"
+      ],
+      "description": "rado - f1",
+      "stock": 29,
+      "id": "849b"
     },
     {
-      "id":"2",
-      "name": "Casio G-Shock GA2100",
-      "brand": "Casio",
-      "price": 8999,
-      "category": "Sports",
-      "image": "https://images.unsplash.com/photo-1609587312208-cea54be969e7?w=400&auto=format&fit=crop&q=80"
+      "id": "9daa",
+      "name": "Rolex",
+      "price": 23000,
+      "category": "luxury",
+      "images": [
+        "https://i.pinimg.com/736x/b6/06/cd/b606cd879f745eaa99fba5955703ac95.jpg"
+      ],
+      "description": "limited edition",
+      "stock": 24
     },
     {
-      "id":" 3",
-      "name": "Fossil Grant Chronograph",
-      "brand": "Fossil",
-      "price": 12999,
-      "category": "Casual",
-      "image": "https://images.unsplash.com/photo-1547996160-81dfa63595aa?w=400&auto=format&fit=crop&q=80"
+      "name": "Rolex-48",
+      "price": 35000,
+      "category": "luxury",
+      "images": [
+        "https://i.pinimg.com/1200x/22/94/61/229461d3f114e066355da42f1674af68.jpg",
+        "https://res.cloudinary.com/dit40na4i/image/upload/v1772707949/gykspwonrpfgtywdrgol.jpg"
+      ],
+      "description": "nnscjsa",
+      "stock": 21,
+      "id": "0d22"
     },
     {
-      "id":"4",
-      "name": "Titan Edge",
-      "brand": "Titan",
-      "price": 10999,
-      "category": "Formal",
-      "image": "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&auto=format&fit=crop&q=80"
+      "name": "HUBLUT",
+      "price": 34000,
+      "category": "sports",
+      "images": [
+        "https://i.pinimg.com/1200x/0c/f4/be/0cf4beb8947ab18bed03eb052587017d.jpg",
+        "https://i.pinimg.com/736x/ea/2b/f8/ea2bf85b12de88af5bd1ec80424ad2ef.jpg"
+      ],
+      "description": "limited edition",
+      "stock": 90,
+      "id": "c461"
     },
     {
-      "id":"5",
-      "name": "Apple Watch Series 9",
-      "brand": "Apple",
-      "price": 41900,
-      "category": "Smartwatch",
-      "image": "https://images.unsplash.com/photo-1575311373937-040b8e1fd5b6?w=400&auto=format&fit=crop&q=80"
+      "id": "2e8f",
+      "name": "Hublot-g5",
+      "price": 40000,
+      "category": "casual",
+      "images": [
+        "https://i.pinimg.com/1200x/5b/a9/bc/5ba9bcfd64375acc17fd8de525d5f399.jpg"
+      ],
+      "description": "dwe f enewdnewfn",
+      "stock": 30
     },
     {
-      "id":"6",
-      "name": "Seiko 5 Automatic",
-      "brand": "Seiko",
-      "price": 15999,
-      "category": "Automatic",
-      "image": "https://images.unsplash.com/photo-1509048191080-d2984bad6ae5?w=400&auto=format&fit=crop&q=80"
+      "name": "G-shoke",
+      "price": 20000,
+      "category": "sports",
+      "images": [
+        "https://i.pinimg.com/736x/fa/c7/0e/fac70e845de14866a260ea8227fba855.jpg",
+        "https://res.cloudinary.com/dit40na4i/image/upload/v1772707025/bpjtjxmyeeo85bdb8scc.jpg"
+      ],
+      "description": "sport watch",
+      "stock": 40,
+      "id": "2f78"
     },
     {
-      "id":"7",
-     "name": "Omega Speedmaster",
-      "brand": "Omega",
-      "price": 520000,
-      "category": "Luxury",
-      "image": "https://images.unsplash.com/photo-1600003014755-ba31aa59c4b6?w=400&auto=format&fit=crop&q=80"
-    },
-    {
-      "id":"8",
-      "name": "Samsung Galaxy Watch 6",
-      "brand": "Samsung",
-      "price": 29999,
-      "category": "Smartwatch",
-      "image": "https://images.unsplash.com/photo-1579586337278-3befd40fd17a?w=400&auto=format&fit=crop&q=80"
-    },
-    {
-      "id":"9",
-      "name": "Timex Expedition",
-      "brand": "Timex",
-      "price": 4999,
-      "category": "Outdoor",
-      "image": "https://images.unsplash.com/photo-1522312346375-d1a52e2b99b3?w=400&auto=format&fit=crop&q=80"
-    },
-    {
-      "id": "10",
-      "name": "Citizen Eco-Drive",
-      "brand": "Citizen",
-      "price": 14999,
-      "category": "Solar",
-      "image": "https://images.unsplash.com/photo-1619134778706-7015533a6150?w=400&auto=format&fit=crop&q=80"
-    },
-    {
-      "id": "11",
-      "name": "Fastrack Reflex",
-      "brand": "Fastrack",
-      "price": 2499,
-      "category": "Budget",
-      "image": "https://images.unsplash.com/photo-1585123334904-845d60e97b29?w=400&auto=format&fit=crop&q=80"
-    },
-    {
-      "id": "12",
-      "name": "Daniel Wellington Classic",
-      "brand": "Daniel Wellington",
-      "price": 17999,
-      "category": "Casual",
-      "image": "https://images.unsplash.com/photo-1509048191080-d2984bad6ae5?w=400&auto=format&fit=crop&q=80"
-    },
-    {
-      "id": "13",
-      "name": "Boat Xtend Smartwatch",
-      "brand": "Boat",
-      "price": 3499,
-      "category": "Smartwatch",
-      "image": "https://images.unsplash.com/photo-1510017803434-a899398421b3?w=400&auto=format&fit=crop&q=80"
-    },
-    {
-      "id": "14",
-      "name": "Noise ColorFit Pro",
-      "brand": "Noise",
-      "price": 2999,
-      "category": "Smartwatch",
-      "image": "https://images.unsplash.com/photo-1551816230-ef5deaed4a26?w=400&auto=format&fit=crop&q=80"
-    },
-    {
-      "id": "15",
-      "name": "Hublot Big Bang",
-      "brand": "Hublot",
-      "price": 900000,
-      "category": "Luxury",
-      "image": "https://images.unsplash.com/photo-1526045431048-f857369baa09?w=400&auto=format&fit=crop&q=80"
-    },
-    {
-      "id": "16",
-      "name": "Skagen Ancher",
-      "brand": "Skagen",
-      "price": 13999,
-      "category": "Formal",
-      "image": "https://images.unsplash.com/photo-1542496658-e33a6d0d50f6?w=400&auto=format&fit=crop&q=80"
-    },
-    {
-      "id": "17",
-      "name": "Michael Kors Lexington",
-      "brand": "Michael Kors",
-      "price": 21999,
-      "category": "Fashion",
-      "image": "https://images.unsplash.com/photo-1539874754764-5a96559165b0?w=400&auto=format&fit=crop&q=80"
-    },
-    {
-      "id": "18",
-      "name": "Diesel Mega Chief",
-      "brand": "Diesel",
-      "price": 18999,
-      "category": "Fashion",
-      "image": "https://images.unsplash.com/photo-1524805444758-089113d48a6d?w=400&auto=format&fit=crop&q=80"
-    },
-    {
-      "id": "19",
-      "name": "Tissot PRX",
-      "brand": "Tissot",
-      "price": 35999,
-      "category": "Premium",
-      "image": "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&auto=format&fit=crop&q=80"
-    },
-    {
-      "id": "20",
-      "name": "Sonata Analog Classic",
-      "brand": "Sonata",
-      "price": 1999,
-      "category": "Budget",
-      "image": "https://images.unsplash.com/photo-1585123334904-845d60e97b29?w=400&auto=format&fit=crop&q=80"
+      "id": "7c2b",
+      "name": "HUBLUT-99",
+      "price": 30000,
+      "category": "sports",
+      "images": [
+        "https://res.cloudinary.com/dit40na4i/image/upload/v1772707889/sa1thv6izfppsbuposzf.jpg",
+        "https://res.cloudinary.com/dit40na4i/image/upload/v1772707898/mjz5cuhz9eey85rqefmx.jpg",
+        "https://res.cloudinary.com/dit40na4i/image/upload/v1772707905/gofo8jqfsiwminbvudad.jpg"
+      ],
+      "description": "fdfgdhfhkf",
+      "stock": 70
     }
-  ]
+  ],
+  "orders": [
+    {
+      "id": "ORD_1772276171680",
+      "userEmail": "ansarmarkar@gmail.com",
+      "customerName": "MUHAMMAD",
+      "address": "CHEKKINTE PURAKKAL  H",
+      "phone": "7994050309",
+      "paymentMethod": "UPI",
+      "paymentStatus": "Paid",
+      "paymentId": "pay_SLXbjm86zNS1Ec",
+      "status": "Delivered",
+      "isDeleted": false,
+      "createdAt": "2026-02-28T10:56:11.681Z",
+      "totalAmount": 459999,
+      "products": [
+        {
+          "productId": "d36f",
+          "name": "Rolex-04h",
+          "price": 459999,
+          "costPrice": 0,
+          "quantity": 1,
+          "status": "Delivered"
+        }
+      ],
+      "paidAt": "2026-02-28T10:57:34.837Z"
+    },
+    {
+      "id": "ORD_1772288186627",
+      "userEmail": "ansarmarkar@gmail.com",
+      "customerName": "MUHAMMAD ANSAR",
+      "address": "CHEKKINTE PURAKKAL  H",
+      "phone": "7994050309",
+      "paymentMethod": "UPI",
+      "paymentStatus": "Paid",
+      "paymentId": "pay_SLaz0C4utPz7dn",
+      "status": "Delivered",
+      "isDeleted": false,
+      "createdAt": "2026-02-28T14:16:26.627Z",
+      "totalAmount": 50000,
+      "products": [
+        {
+          "productId": "db18",
+          "name": "Rolex-48",
+          "price": 50000,
+          "costPrice": 0,
+          "quantity": 1,
+          "status": "Delivered"
+        }
+      ],
+      "paidAt": "2026-02-28T14:16:37.032Z"
+    },
+    {
+      "id": "ORD_1772426202741",
+      "userEmail": "sumi@gmail.com",
+      "customerName": "MUHAMMAD ANSAR",
+      "address": "CHEKKINTE PURAKKAL  H",
+      "phone": "7994050309",
+      "paymentMethod": "Cash on Delivery",
+      "paymentStatus": "Pending",
+      "paymentId": null,
+      "status": "Delivered",
+      "isDeleted": false,
+      "createdAt": "2026-03-02T04:36:42.741Z",
+      "totalAmount": 2344995,
+      "products": [
+        {
+          "productId": "d36f",
+          "name": "Rolex-04h",
+          "price": 459999,
+          "costPrice": 0,
+          "quantity": 5,
+          "status": "Delivered",
+          "paymentStatus": "Paid"
+        },
+        {
+          "productId": "81dc",
+          "name": "Hublot-g5",
+          "price": 45000,
+          "costPrice": 0,
+          "quantity": 1,
+          "status": "Delivered",
+          "paymentStatus": "Paid"
+        }
+      ]
+    },
+    {
+      "id": "ORD_1772531467774",
+      "userEmail": "ansarmarkar@gmail.com",
+      "customerName": "MUHAMMAD ANSAR",
+      "address": "CHEKKINTE PURAKKAL  H",
+      "phone": "7994050309",
+      "paymentMethod": "UPI",
+      "paymentStatus": "Paid",
+      "paymentId": "pay_SMi7dH6q7DsEMq",
+      "status": "Delivered",
+      "isDeleted": false,
+      "createdAt": "2026-03-03T09:51:07.774Z",
+      "totalAmount": 459999,
+      "products": [
+        {
+          "productId": "d36f",
+          "name": "Rolex-04h",
+          "price": 459999,
+          "costPrice": 0,
+          "quantity": 1,
+          "status": "Delivered"
+        }
+      ],
+      "paidAt": "2026-03-03T09:54:39.125Z"
+    },
+    {
+      "id": "ORD_1772531530732",
+      "userEmail": "ansarmarkar@gmail.com",
+      "customerName": "MUHAMMAD",
+      "address": "CHEKKINTE PURAKKAL  H",
+      "phone": "9809147713",
+      "paymentMethod": "Cash on Delivery",
+      "paymentStatus": "Pending",
+      "paymentId": null,
+      "status": "Delivered",
+      "isDeleted": false,
+      "createdAt": "2026-03-03T09:52:10.732Z",
+      "totalAmount": 1209998,
+      "products": [
+        {
+          "productId": "d36f",
+          "name": "Rolex-04h",
+          "price": 459999,
+          "costPrice": 0,
+          "quantity": 2,
+          "status": "Delivered",
+          "paymentStatus": "Paid"
+        },
+        {
+          "productId": "81dc",
+          "name": "Hublot-g5",
+          "price": 45000,
+          "costPrice": 0,
+          "quantity": 2,
+          "status": "Delivered",
+          "paymentStatus": "Paid"
+        },
+        {
+          "productId": "6c7c",
+          "name": "some item",
+          "price": 100000,
+          "costPrice": 0,
+          "quantity": 2,
+          "status": "Delivered",
+          "paymentStatus": "Paid"
+        }
+      ]
+    },
+    {
+      "id": "ORD_1772597196112",
+      "userEmail": "fayiz@gmail.com",
+      "customerName": "muhammed fayiz",
+      "address": "paramath (h), kottakkal",
+      "phone": "6789012345",
+      "paymentMethod": "UPI",
+      "paymentStatus": "Paid",
+      "paymentId": "pay_SN0jH8FNDpiQcd",
+      "status": "Cancelled",
+      "isDeleted": false,
+      "createdAt": "2026-03-04T04:06:36.112Z",
+      "totalAmount": 100000,
+      "products": [
+        {
+          "productId": "db18",
+          "name": "Rolex-48",
+          "price": 50000,
+          "costPrice": 0,
+          "quantity": 2,
+          "status": "Processing"
+        }
+      ],
+      "paidAt": "2026-03-04T04:06:46.069Z"
+    },
+    {
+      "id": "ORD_1772599424414",
+      "userEmail": "fayiz@gmail.com",
+      "customerName": "muhammed fayiz",
+      "address": "CHEKKINTE PURAKKAL  H",
+      "phone": "7994050309",
+      "paymentMethod": "UPI",
+      "paymentStatus": "Paid",
+      "paymentId": "pay_SN1MeARn2MI5Kl",
+      "status": "Cancelled",
+      "isDeleted": false,
+      "createdAt": "2026-03-04T04:43:44.414Z",
+      "totalAmount": 45000,
+      "products": [
+        {
+          "productId": "81dc",
+          "name": "Hublot-g5",
+          "price": 45000,
+          "costPrice": 0,
+          "quantity": 1,
+          "status": "Cancelled"
+        }
+      ],
+      "paidAt": "2026-03-04T04:43:52.149Z"
+    },
+    {
+      "id": "ORD_1772624121724",
+      "userEmail": "ranama6659@keecs.com",
+      "customerName": "naaeem",
+      "address": "CHEKKINTE PURAKKAL  H",
+      "phone": "7994050309",
+      "paymentMethod": "Cash on Delivery",
+      "paymentStatus": "Pending",
+      "paymentId": null,
+      "status": "Delivered",
+      "isDeleted": false,
+      "createdAt": "2026-03-04T11:35:21.724Z",
+      "totalAmount": 459999,
+      "products": [
+        {
+          "productId": "d36f",
+          "name": "Rolex-04h",
+          "price": 459999,
+          "costPrice": 0,
+          "quantity": 1,
+          "status": "Delivered",
+          "paymentStatus": "Paid"
+        }
+      ]
+    },
+    {
+      "id": "ORD_1772624337575",
+      "userEmail": "ranama6659@keecs.com",
+      "customerName": "naaeem",
+      "address": "CHEKKINTE PURAKKAL  H",
+      "phone": "7994050309",
+      "paymentMethod": "Cash on Delivery",
+      "paymentStatus": "Pending",
+      "paymentId": null,
+      "status": "Delivered",
+      "isDeleted": false,
+      "createdAt": "2026-03-04T11:38:57.575Z",
+      "totalAmount": 50000,
+      "products": [
+        {
+          "productId": "db18",
+          "name": "Rolex-48",
+          "price": 50000,
+          "costPrice": 0,
+          "quantity": 1,
+          "status": "Delivered",
+          "paymentStatus": "Paid"
+        }
+      ]
+    },
+    {
+      "id": "ORD_1772688734549",
+      "userEmail": "ansarbinkunhimarkar@gmail.com",
+      "customerName": "MUHAMMAD ANSAR",
+      "address": "CHEKKINTE PURAKKAL  H",
+      "phone": "7994050309",
+      "paymentMethod": "Cash on Delivery",
+      "paymentStatus": "Pending",
+      "paymentId": null,
+      "status": "Delivered",
+      "isDeleted": false,
+      "createdAt": "2026-03-05T05:32:14.549Z",
+      "totalAmount": 23000,
+      "products": [
+        {
+          "productId": "9daa",
+          "name": "Rolex",
+          "price": 23000,
+          "costPrice": 0,
+          "quantity": 1,
+          "status": "Delivered",
+          "paymentStatus": "Paid"
+        }
+      ]
+    },
+    {
+      "id": "ORD_1772692794799",
+      "userEmail": "fayiz@gmail.com",
+      "customerName": "MUHAMMAD ANSAR",
+      "address": "CHEKKINTE PURAKKAL  H",
+      "phone": "7994050309",
+      "paymentMethod": "Cash on Delivery",
+      "paymentStatus": "Pending",
+      "paymentId": null,
+      "status": "Placed",
+      "isDeleted": false,
+      "createdAt": "2026-03-05T06:39:54.799Z",
+      "totalAmount": 0,
+      "products": []
+    },
+    {
+      "id": "ORD_1772692863463",
+      "userEmail": "fayiz@gmail.com",
+      "customerName": "muhammed fayiz",
+      "address": "CHEKKINTE PURAKKAL  H",
+      "phone": "7994050309",
+      "paymentMethod": "UPI",
+      "paymentStatus": "Paid",
+      "paymentId": "pay_SNRtys4Ox6H6qQ",
+      "status": "Placed",
+      "isDeleted": false,
+      "createdAt": "2026-03-05T06:41:03.463Z",
+      "totalAmount": 34000,
+      "products": [
+        {
+          "productId": "c461",
+          "name": "HUBLUT",
+          "price": 34000,
+          "costPrice": 0,
+          "quantity": 1,
+          "status": "Placed"
+        }
+      ],
+      "paidAt": "2026-03-05T06:41:29.197Z"
+    },
+    {
+      "id": "ORD_1772692937751",
+      "userEmail": "fayiz@gmail.com",
+      "customerName": "muhammed fayiz",
+      "address": "CHEKKINTE PURAKKAL  H",
+      "phone": "7994050309",
+      "paymentMethod": "Cash on Delivery",
+      "paymentStatus": "Pending",
+      "paymentId": null,
+      "status": "Placed",
+      "isDeleted": false,
+      "createdAt": "2026-03-05T06:42:17.751Z",
+      "totalAmount": 30000,
+      "products": [
+        {
+          "productId": "849b",
+          "name": "rado",
+          "price": 30000,
+          "costPrice": 0,
+          "quantity": 1,
+          "status": "Placed"
+        }
+      ]
+    },
+    {
+      "id": "ORD_1772693060959",
+      "userEmail": "fayiz@gmail.com",
+      "customerName": "MUHAMMAD ANSAR",
+      "address": "CHEKKINTE PURAKKAL  H",
+      "phone": "7994050309",
+      "paymentMethod": "Cash on Delivery",
+      "paymentStatus": "Pending",
+      "paymentId": null,
+      "status": "Placed",
+      "isDeleted": false,
+      "createdAt": "2026-03-05T06:44:20.959Z",
+      "totalAmount": 68000,
+      "products": [
+        {
+          "productId": "c461",
+          "name": "HUBLUT",
+          "price": 34000,
+          "costPrice": 0,
+          "quantity": 2,
+          "status": "Placed"
+        }
+      ]
+    }
+  ],
+  "payments": [],
+  "reviews": []
 }

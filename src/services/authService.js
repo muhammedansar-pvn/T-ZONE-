@@ -1,74 +1,58 @@
 import axios from "axios";
+import { BASE_URL } from "../config/api";
 
-const API = "http://localhost:3000/users";
-
-export const registerUser = async (
-  name,
-  email,
-  password,
-  mobile,
-  address
-) => {
+/* ================================
+   LOGIN
+================================ */
+export const loginUser = async (email, password) => {
   try {
-    // check existing email
-    const existingUser = await axios.get(`${API}?email=${email}`);
+    const res = await axios.get(
+      `${BASE_URL}/users?email=${email}`
+    );
 
-    if (existingUser.data.length > 0) {
-      return {
-        success: false,
-        message: "Email already registered",
-      };
+    if (res.data.length === 0) {
+      throw new Error("User not found");
     }
 
-    const response = await axios.post(API, {
-      name,
-      email,
-      password,
-      mobile,
-      address,
-    });
+    const user = res.data[0];
 
-    return {
-      success: true,
-      user: response.data,
-    };
+    if (user.password !== password) {
+      throw new Error("Invalid password");
+    }
+
+    if (user.isBlocked) {
+      throw new Error("Your account has been blocked");
+    }
+
+    return user;
   } catch (error) {
-    console.log("Registration Error:", error); //  show in console
-
-    return {
-      success: false,
-      message:
-        error.response?.data?.message ||
-        error.message ||
-        "Server error",
-    };
+    throw error;
   }
 };
 
-
-
-// LOGIN USER
-export const loginUser = async (email, password) => {
+/* ================================
+   REGISTER
+================================ */
+export const registerUser = async (userData) => {
   try {
-    const response = await axios.get(
-      `${API}?email=${email}&password=${password}`
+    // Check duplicate email
+    const check = await axios.get(
+      `${BASE_URL}/users?email=${userData.email}`
     );
 
-    if (response.data.length === 0) {
-      return {
-        success: false,
-        message: "Invalid email or password",
-      };
+    if (check.data.length > 0) {
+      throw new Error("Email already registered");
     }
 
-    return {
-      success: true,
-      user: response.data[0],
-    };
+    const res = await axios.post(`${BASE_URL}/users`, {
+      ...userData,
+      isBlocked: false,
+      role: "user",
+      createdAt: new Date().toISOString(),
+    });
+
+    return res.data;
   } catch (error) {
-    return {
-      success: false,
-      message: "Login failed",
-    };
+    throw error;
   }
 };
