@@ -2,6 +2,7 @@ import { useState } from "react";
 import { addProduct } from "../../../services/productService";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import API from "../../../config/api";
 
 const MAX_IMAGES = 5;
 
@@ -210,9 +211,7 @@ const AddProduct = () => {
     try {
       setLoading(true);
 
-      const { data: productsRes } = await axios.get(
-        "http://localhost:5000/api/products"
-      );
+      const { data: productsRes } = await API.get("/products");
 
       const products = productsRes.products || [];
 

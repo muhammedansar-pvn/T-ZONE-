@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo, useRef } from "react";
 import { getOrders } from "../../../services/orderService";
-import API from "../../../config/api";
+import API, { BASE_URL } from "../../../config/api";
 
 const ORDER_STATUSES = [
   "Placed",
@@ -111,7 +111,7 @@ const OrdersManagement = () => {
     //   try {
 
     //     const res = await fetch(
-    //       `http://localhost:5000/products/${product.productId}`
+    //       `${BASE_URL}/products/${product.productId}`
     //     );
 
     //     if (!res.ok) return;
@@ -126,7 +126,7 @@ const OrdersManagement = () => {
     //     );
 
     //     await fetch(
-    //       `http://localhost:5000/products/${product.productId}`,
+    //       `${BASE_URL}/products/${product.productId}`,
     //       {
     //         method: "PATCH",
     //         headers: {

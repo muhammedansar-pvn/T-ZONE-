@@ -1,8 +1,8 @@
 /* eslint-disable react-refresh/only-export-components */
 import { createContext, useState, useEffect, useRef, useContext } from "react";
-import axios from "axios";
-import { BASE_URL } from "../config/api";
+import API from "../config/api";
 import toast from "react-hot-toast";
+import { logoutUser } from "../services/authService";
 
 const AuthContext = createContext();
 
@@ -29,26 +29,35 @@ export const AuthProvider = ({ children }) => {
       toast.error("Your account has been temporarily blocked");
       return;
     }
+
     setUser(userData);
-    localStorage.setItem("authUser", JSON.stringify(userData));
+
+    localStorage.setItem(
+      "authUser",
+      JSON.stringify(userData)
+    );
+
+    if (userData.token) {
+      localStorage.setItem("token", userData.token);
+    }
   };
 
   // 🔹 Logout
-  const logout = () => {
+  const logout = async () => {
     setUser(null);
-    localStorage.removeItem("authUser");
-    localStorage.removeItem("wishlist");
+    await logoutUser();
     window.location.replace("/login");
   };
 
-  // 🔹 Update Profile (Added feature to fix profile editor crash)
+  // 🔹 Update Profile
   const updateProfile = async (updatedData) => {
     if (!user?.id) return;
     try {
-      const res = await axios.patch(`${BASE_URL}/users/${user.id}`, updatedData);
+      const res = await API.patch(`/users/${user.id}`, updatedData);
       const latestUser = res.data;
       const updatedUser = {
         ...latestUser,
+        id: latestUser._id || latestUser.id || user.id,
         token: user.token,
       };
       setUser(updatedUser);
@@ -68,7 +77,7 @@ export const AuthProvider = ({ children }) => {
 
     const checkUserStatus = async () => {
       try {
-        const res = await axios.get(`${BASE_URL}/users/${user.id}`);
+        const res = await API.get(`/users/${user.id}`);
         const latestUser = res.data;
 
         // User deleted
@@ -90,12 +99,16 @@ export const AuthProvider = ({ children }) => {
         // Update latest user
         const updatedUser = {
           ...latestUser,
+          id: latestUser._id || latestUser.id || user.id,
           token: user.token,
         };
         setUser(updatedUser);
         localStorage.setItem("authUser", JSON.stringify(updatedUser));
       } catch (error) {
         console.log("User status check failed", error);
+        if (error.response && (error.response.status === 404 || error.response.status === 401 || error.response.status === 403)) {
+          logout();
+        }
       }
     };
 

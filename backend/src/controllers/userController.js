@@ -1,94 +1,57 @@
+// controllers/userController.js
+// This controller handles viewing user details and updating user profile or block status.
+
 const User = require("../models/User");
+const AppError = require("../utils/AppError");
 
-// 🔹 Get all users
-const getUsers = async (req, res) => {
-  try {
-    const users = await User.find({ isDeleted: false });
-    res.json(users);
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
-  }
-};
-
-// 🔹 Get user by ID
+// 🔹 Get a single user by their ID
+// Path: GET /api/users/:id
 const getUserById = async (req, res) => {
-  try {
-    const user = await User.findById(req.params.id);
-    if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: "User not found",
-      });
-    }
-    res.json(user);
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
+  const userId = req.params.id;
+  
+  const user = await User.findById(userId);
+  
+  if (!user) {
+    throw new AppError("User not found", 404);
   }
+  
+  return res.json(user);
 };
 
-// 🔹 Update user (profile or block status)
+// 🔹 Update user details (profile or block status)
+// Path: PATCH /api/users/:id or PUT /api/users/:id
 const updateUser = async (req, res) => {
-  try {
-    const { name, mobile, address, isBlocked } = req.body;
+  const userId = req.params.id;
+  const { name, mobile, address, isBlocked } = req.body;
 
-    const user = await User.findById(req.params.id);
-    if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: "User not found",
-      });
-    }
-
-    if (name !== undefined) {
-      user.name = name;
-      user.username = name; // Sync username and name
-    }
-    if (mobile !== undefined) user.mobile = mobile;
-    if (address !== undefined) user.address = address;
-    if (isBlocked !== undefined) user.isBlocked = isBlocked;
-
-    await user.save();
-
-    res.json(user);
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
+  // 1. Find the user record
+  const user = await User.findById(userId);
+  if (!user) {
+    throw new AppError("User not found", 404);
   }
-};
 
-// 🔹 Delete user
-const deleteUser = async (req, res) => {
-  try {
-    const user = await User.findByIdAndDelete(req.params.id);
-    if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: "User not found",
-      });
-    }
-    res.json({
-      success: true,
-      message: "User deleted successfully",
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
+  // 2. Explicitly apply the updates only if they were passed in the request body
+  if (name !== undefined) {
+    user.name = name;
+    user.username = name; // Sync username and name
   }
+  if (mobile !== undefined) {
+    user.mobile = mobile;
+  }
+  if (address !== undefined) {
+    user.address = address;
+  }
+  if (isBlocked !== undefined) {
+    user.isBlocked = isBlocked;
+  }
+
+  // 3. Save the modified document
+  await user.save();
+
+  return res.json(user);
 };
 
 module.exports = {
-  getUsers,
   getUserById,
   updateUser,
-  deleteUser,
 };

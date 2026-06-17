@@ -46,9 +46,9 @@ const Dashboard = () => {
           API.get("/orders"),
         ]);
 
-        const orders = ordersRes.data || [];
-        const products = productsRes.data.products || productsRes.data || [];
-        const users = usersRes.data || [];
+        const orders = ordersRes.data.data?.orders || ordersRes.data.data || (Array.isArray(ordersRes.data) ? ordersRes.data : []);
+        const products = productsRes.data.products || (Array.isArray(productsRes.data) ? productsRes.data : []);
+        const users = usersRes.data.users || (Array.isArray(usersRes.data) ? usersRes.data : []);
 
         const now = new Date();
 

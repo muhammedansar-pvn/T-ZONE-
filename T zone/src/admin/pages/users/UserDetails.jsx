@@ -1,8 +1,6 @@
 import { useEffect, useState, useMemo } from "react";
 import { useParams } from "react-router-dom";
-import axios from "axios";
-
-const API_BASE = "http://localhost:5000";
+import API from "../../../config/api";
 
 const UserDetails = () => {
   const { id } = useParams();
@@ -15,15 +13,12 @@ const UserDetails = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const userRes = await axios.get(
-          `${API_BASE}/users/${id}`
-        );
+        const userRes = await API.get(`/users/${id}`);
+        const ordersRes = await API.get("/orders");
 
-        const ordersRes = await axios.get(
-          `${API_BASE}/orders`
-        );
+        const ordersList = ordersRes.data.data?.orders || ordersRes.data.data || (Array.isArray(ordersRes.data) ? ordersRes.data : []);
 
-        const userOrders = ordersRes.data.filter(
+        const userOrders = ordersList.filter(
           order =>
             order.userEmail === userRes.data.email &&
             !order.isDeleted
@@ -31,12 +26,11 @@ const UserDetails = () => {
 
         setUser(userRes.data);
 
-        
         if (userRes.data.role !== "admin") {
           setOrders(userOrders);
         }
-      } catch {
-        console.error("Error loading user");
+      } catch (err) {
+        console.error("Error loading user", err);
       } finally {
         setLoading(false);
       }

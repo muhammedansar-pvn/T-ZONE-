@@ -1,81 +1,89 @@
+// controllers/wishlistController.js
+// This controller handles all operations on the user's wishlist: Adding, viewing, and removing items.
+
 const Wishlist = require("../models/Wishlist");
 const Product = require("../models/Product");
+const AppError = require("../utils/AppError");
 
 // 🔹 Add product to user's wishlist
+// Path: POST /api/wishlist
 const addToWishlist = async (req, res) => {
-  try {
-    const { productId } = req.body;
-    const userId = req.user.id;
+  const { productId } = req.body;
+  const userId = req.user.id;
 
-    // Check if already in wishlist
-    const exists = await Wishlist.findOne({ userId, productId });
+  // 1. Check if the product is already in the user's wishlist
+  const existingItem = await Wishlist.findOne({ 
+    userId: userId, 
+    productId: productId 
+  });
 
-    if (exists) {
-      return res.status(200).json({
-        success: true,
-        message: "Product already in wishlist",
-      });
-    }
-
-    const wishlistItem = await Wishlist.create({
-      userId,
-      productId,
-    });
-
-    const populated = await Wishlist.findById(wishlistItem._id).populate("productId");
-
-    res.status(201).json({
+  if (existingItem) {
+    return res.status(200).json({
       success: true,
-      product: populated.productId,
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
+      message: "Product already in wishlist",
     });
   }
+  
+  // 2. Add the product to the wishlist
+  const wishlistItem = await Wishlist.create({
+    userId: userId,
+    productId: productId,
+  });
+
+  // 3. Populate product details to return to frontend
+  const populatedItem = await Wishlist.findById(wishlistItem._id).populate("productId");
+  if (!populatedItem || !populatedItem.productId) {
+    throw new AppError("Product not found", 404);
+  }
+
+  return res.status(201).json({
+    success: true,
+    product: populatedItem.productId,
+  });
 };
 
-// 🔹 Get user's wishlist
+// 🔹 Get user's wishlist items
+// Path: GET /api/wishlist
 const getWishlist = async (req, res) => {
-  try {
-    const userId = req.user.id;
-    const wishlistItems = await Wishlist.find({ userId }).populate("productId");
+  const userId = req.user.id;
 
-    // Filter out items where the product was deleted
-    const validItems = wishlistItems.filter(item => item.productId);
-    const wishlist = validItems.map(item => item.productId);
+  // 1. Find all wishlist records for the user and load the product details
+  const wishlistItems = await Wishlist.find({ userId: userId }).populate("productId");
 
-    res.json({
-      success: true,
-      wishlist,
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
+  // 2. Loop through the items and extract only the active products (skipping deleted ones)
+  const activeProductsList = [];
+
+  for (let i = 0; i < wishlistItems.length; i++) {
+    const item = wishlistItems[i];
+    
+    // If the product exists (was not deleted), add it to the list
+    if (item.productId) {
+      activeProductsList.push(item.productId);
+    }
   }
+
+  return res.json({
+    success: true,
+    wishlist: activeProductsList,
+  });
 };
 
 // 🔹 Remove product from user's wishlist
+// Path: DELETE /api/wishlist/:productId
 const removeWishlist = async (req, res) => {
-  try {
-    const productId = req.params.productId;
-    const userId = req.user.id;
+  const productId = req.params.productId;
+  const userId = req.user.id;
 
-    await Wishlist.findOneAndDelete({ userId, productId });
+  // Delete the wishlist item matching the user and product IDs
+  await Wishlist.findOneAndDelete({ 
+    userId: userId, 
+    productId: productId 
+  });
 
-    res.json({
-      success: true,
-      message: "Removed from wishlist",
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
-  }
+  return res.json({
+    success: true,
+    message: "Removed from wishlist",
+  });
 };
 
 module.exports = {

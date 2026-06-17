@@ -1,8 +1,6 @@
 import { useEffect, useState, useMemo } from "react";
-import axios from "axios";
 import { Link } from "react-router-dom";
-
-const API_BASE = "http://localhost:5000";
+import API from "../../../config/api";
 
 const Users = () => {
   const [users, setUsers] = useState([]);
@@ -13,9 +11,14 @@ const Users = () => {
   /* ================= FETCH USERS ================= */
   const fetchUsers = async () => {
     try {
-      const res = await axios.get(`${API_BASE}/users`);
-      setUsers(res.data);
-    } catch {
+      const res = await API.get("/users");
+      const fetchedUsers = (res.data.users || res.data || []).map(u => ({
+        ...u,
+        id: u.id || u._id,
+      }));
+      setUsers(fetchedUsers);
+    } catch (err) {
+      console.error(err);
       setError("Failed to load users");
     } finally {
       setLoading(false);
@@ -41,9 +44,10 @@ const Users = () => {
   /* ================= BLOCK / UNBLOCK ================= */
   const toggleBlock = async user => {
     if (user.role === "admin") return;
+    const userId = user.id || user._id;
 
-    await axios.patch(
-      `${API_BASE}/users/${user.id}`,
+    await API.patch(
+      `/users/${userId}`,
       {
         isBlocked: !user.isBlocked,
       }
@@ -51,7 +55,7 @@ const Users = () => {
 
     setUsers(prev =>
       prev.map(u =>
-        u.id === user.id
+        (u.id || u._id) === userId
           ? { ...u, isBlocked: !u.isBlocked }
           : u
       )
@@ -68,12 +72,14 @@ const Users = () => {
     if (!window.confirm("Delete this user?"))
       return;
 
-    await axios.delete(
-      `${API_BASE}/users/${user.id}`
+    const userId = user.id || user._id;
+
+    await API.delete(
+      `/users/${userId}`
     );
 
     setUsers(prev =>
-      prev.filter(u => u.id !== user.id)
+      prev.filter(u => (u.id || u._id) !== userId)
     );
   };
 

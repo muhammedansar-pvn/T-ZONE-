@@ -3,8 +3,9 @@ import { useEffect, useState, useContext } from "react";
 import axios from "axios";
 import { CartContext } from "../Context/CartContext";
 import { FaHeart } from "react-icons/fa";
+import { BASE_URL } from "../config/api";
 
-const API_BASE = "http://localhost:5000/products";
+const API_BASE = `${BASE_URL}/products`;
 const MAX_QUANTITY = 5;
 
 const ProductDetails = () => {

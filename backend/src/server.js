@@ -1,5 +1,6 @@
 const express=require("express")
 const cors= require("cors")
+const cookieParser = require("cookie-parser")
 const dotenv=require("dotenv")
 const connectDB = require("./config/db");
 const authRoutes = require("./routes/authRoutes");
@@ -9,20 +10,37 @@ const cartRoutes = require("./routes/cartRoutes");
 const orderRoutes = require("./routes/orderRoutes");
 const userRoutes = require("./routes/userRoutes");
 const paymentRoutes = require("./routes/paymentRoutes");
+const adminRoutes = require("./routes/adminRoutes");
+
 
 dotenv.config()
 
 connectDB();
 const app= express()
 
-app.use(cors())
+const allowedOrigins = process.env.ALLOWED_ORIGINS.split(",");
+
+
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    callback(new Error("Not allowed by CORS"));
+  },
+  credentials: true
+}));
+
+
 app.use(express.json())
+app.use(cookieParser())
 
 app.use("/api/products", productRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/wishlist", wishlistRoutes);
 app.use("/api/cart", cartRoutes);
 app.use("/api/orders", orderRoutes);
+app.use("/api/admin", adminRoutes);
 
 // Register user routes on both /users and /api/users for frontend compatibility
 app.use("/users", userRoutes);
@@ -39,8 +57,19 @@ app.get("/",(req,res)=>{
     })
 })
 
+// Catch all unhandled routes and forward a 404 AppError
+const AppError = require("./utils/AppError");
+app.use((req, res, next) => {
+  next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
+});
+
+// Centralized error handling middleware
+const errorHandler = require("./middleware/errorMiddleware");
+app.use(errorHandler);
+
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+

@@ -5,7 +5,7 @@ import API from "../config/api";
 export const getProducts = async () => {
   try {
     const res = await API.get("/products");
-    return res.data.products; // <-- മാറ്റം ഇവിടെ
+    return res.data.products; // 
   } catch (error) {
     console.error("Fetch Products Error:", error.message);
     throw error;

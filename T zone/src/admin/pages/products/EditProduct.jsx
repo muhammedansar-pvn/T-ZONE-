@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
+import API from "../../../config/api";
 import {
   getProductById,
   updateProduct,
@@ -231,9 +232,7 @@ const EditProduct = () => {
     try {
       setLoading(true);
 
-      const { data: productsRes } = await axios.get(
-        "http://localhost:5000/api/products"
-      );
+      const { data: productsRes } = await API.get("/products");
 
       const products = productsRes.products || [];
 

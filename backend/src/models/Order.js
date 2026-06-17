@@ -23,7 +23,7 @@ const orderSchema = new mongoose.Schema(
     },
 
     phone: {
-      type: String,
+      type: Number,
       default: "",
     },
 
@@ -50,6 +50,11 @@ const orderSchema = new mongoose.Schema(
     stockUpdated: {
       type: Boolean,
       default: false,
+    },
+
+    paidAt: {
+      type: Date,
+      default: null,
     },
 
     isDeleted: {
@@ -124,9 +129,43 @@ const orderSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
-    toJSON: { virtuals: true },
-    toObject: { virtuals: true },
+    id: false,
+    toJSON: {
+      virtuals: true,
+      transform: (doc, ret) => {
+        ret.id = ret.orderId || ret.id;
+        ret.totalPrice = ret.totalAmount = ret.totalPrice || ret.totalAmount || 0;
+        return ret;
+      }
+    },
+    toObject: {
+      virtuals: true,
+      transform: (doc, ret) => {
+        ret.id = ret.orderId || ret.id;
+        ret.totalPrice = ret.totalAmount = ret.totalPrice || ret.totalAmount || 0;
+        return ret;
+      }
+    }
   }
 );
+
+// Virtual for id mapping to orderId
+orderSchema.virtual("id")
+  .get(function() {
+    return this.orderId;
+  })
+  .set(function(val) {
+    this.orderId = val;
+  });
+
+// Pre-validate middleware to calculate totalItems and synchronize prices
+orderSchema.pre("validate", function() {
+  if (this.products && (!this.totalItems || this.totalItems === 0)) {
+    this.totalItems = this.products.reduce((acc, p) => acc + (p.quantity || 1), 0);
+  }
+  const price = this.totalPrice || this.totalAmount || 0;
+  this.totalPrice = price;
+  this.totalAmount = price;
+});
 
 module.exports = mongoose.model("Order", orderSchema);

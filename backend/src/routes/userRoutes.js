@@ -1,16 +1,21 @@
 const express = require("express");
 const router = express.Router();
+const protect = require("../middleware/authMiddleware");
+const { authorize, authorizeSelfOrAdmin } = require("../middleware/roleMiddleware");
 const {
-  getUsers,
   getUserById,
   updateUser,
-  deleteUser,
 } = require("../controllers/userController");
 
-router.get("/", getUsers);
-router.get("/:id", getUserById);
-router.patch("/:id", updateUser);
-router.put("/:id", updateUser);
-router.delete("/:id", deleteUser);
+const {
+  getAllUsers,
+  deleteUser,
+} = require("../controllers/adminController/adminUserController");
+
+router.get("/", protect, authorize("admin"), getAllUsers);
+router.get("/:id", protect, authorizeSelfOrAdmin, getUserById);
+router.patch("/:id", protect, authorizeSelfOrAdmin, updateUser);
+router.put("/:id", protect, authorizeSelfOrAdmin, updateUser);
+router.delete("/:id", protect, authorize("admin"), deleteUser);
 
 module.exports = router;

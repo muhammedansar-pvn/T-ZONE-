@@ -8,9 +8,14 @@ import API from "../config/api";
 export const getOrders = async () => {
   try {
     const res = await API.get("/orders");
-    return res.data;
+
+    return res.data.data || [];
   } catch (error) {
-    console.error("Fetch error:", error.response?.data || error.message);
+    console.error(
+      "Fetch error:",
+      error.response?.data || error.message
+    );
+
     return [];
   }
 };
@@ -20,22 +25,7 @@ export const getOrders = async () => {
 ================================ */
 export const saveOrder = async (orderData) => {
   try {
-    // 🔥 Validate & Reduce Stock
-    for (const item of orderData.products) {
-      const { data: product } = await API.get(`/products/${item.productId}`);
-
-      if (!product) throw new Error("Product not found");
-
-      if ((product.stock || 0) < item.quantity) {
-        throw new Error(`Insufficient stock for ${product.name}`);
-      }
-
-      await API.patch(`/products/${item.productId}`, {
-        stock: product.stock - item.quantity,
-      });
-    }
-
-    // 🔥 Save Order
+    // 🔥 Save Order - Backend automatically validates stock and reduces it
     const res = await API.post("/orders", {
       ...orderData,
       status: "Placed",
@@ -62,16 +52,7 @@ export const cancelOrder = async (orderId) => {
       throw new Error("Delivered order cannot be cancelled");
     }
 
-    // 🔥 Restore Stock
-    for (const item of order.products) {
-      const { data: product } = await API.get(`/products/${item.productId}`);
-
-      await API.patch(`/products/${item.productId}`, {
-        stock: (product.stock || 0) + item.quantity,
-      });
-    }
-
-    // 🔥 Update Order Status
+    // 🔥 Update Order Status - Backend automatically restores stock when cancelled
     const { data } = await API.patch(`/orders/${String(orderId)}`, {
       status: "Cancelled",
     });
@@ -102,14 +83,7 @@ export const cancelSingleItem = async (orderId, productId) => {
 
     if (!item) throw new Error("Product not found in order");
 
-    // 🔥 Restore 1 quantity to stock
-    const { data: product } = await API.get(`/products/${productId}`);
-
-    await API.patch(`/products/${productId}`, {
-      stock: (product.stock || 0) + 1,
-    });
-
-    // 🔥 Reduce quantity in order
+    // 🔥 Reduce quantity in order - Backend will automatically compare old and new products list and restore stock for the difference
     const updatedProducts = order.products
       .map((p) =>
         String(p.productId) === String(productId)

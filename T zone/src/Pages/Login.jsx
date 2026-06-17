@@ -63,8 +63,46 @@ const Login = () => {
 };
 
   const handleGoogleLogin = async () => {
-  setError("Google Login temporarily disabled");
-};
+    setError("");
+    setLoading(true);
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      const firebaseUser = result.user;
+
+      const res = await API.post("/auth/google-login", {
+        email: firebaseUser.email,
+        name: firebaseUser.displayName || firebaseUser.email.split("@")[0],
+        googleId: firebaseUser.uid,
+      });
+
+      const { token, user: backendUser } = res.data;
+
+      localStorage.setItem("token", token);
+      localStorage.setItem(
+        "authUser",
+        JSON.stringify({
+          ...backendUser,
+          token,
+        })
+      );
+
+      login({
+        ...backendUser,
+        token,
+      });
+
+      navigate(backendUser.role === "admin" ? "/admin" : "/");
+    } catch (err) {
+      console.log(err);
+      setError(
+        err.response?.data?.message ||
+          err.message ||
+          "Google login failed"
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen flex justify-center items-center bg-gray-100">

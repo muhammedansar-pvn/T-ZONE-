@@ -98,7 +98,7 @@ const Signup = () => {
   };
 
   // submit
- const handleSubmit = async (e) => {
+const handleSubmit = async (e) => {
   e.preventDefault();
   setError("");
 
@@ -112,7 +112,7 @@ const Signup = () => {
   try {
     setLoading(true);
 
-    await registerUser({
+    const data = await registerUser({
       name: form.name.trim(),
       email: form.email.trim(),
       password: form.password,
@@ -120,8 +120,16 @@ const Signup = () => {
       address: form.address.trim(),
     });
 
+    // Save token
+    localStorage.setItem("token", data.token);
+
+    // Login user into context
+    login(data.user, data.token);
+
     alert("Registration Successful");
-    navigate("/login");
+
+    // Redirect to home page
+    navigate("/");
   } catch (error) {
     setError(error.message || "Registration failed");
   } finally {
@@ -182,9 +190,48 @@ const Signup = () => {
   // };
 
   // Google signup
- const handleGoogleSignup = async () => {
-  setError("Google Signup temporarily disabled");
-};
+  const handleGoogleSignup = async () => {
+    setError("");
+    setLoading(true);
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      const firebaseUser = result.user;
+
+      const res = await API.post("/auth/google-login", {
+        email: firebaseUser.email,
+        name: firebaseUser.displayName || firebaseUser.email.split("@")[0],
+        googleId: firebaseUser.uid,
+      });
+
+      const { token, user: backendUser } = res.data;
+
+      localStorage.setItem("token", token);
+      localStorage.setItem(
+        "authUser",
+        JSON.stringify({
+          ...backendUser,
+          token,
+        })
+      );
+
+      login({
+        ...backendUser,
+        token,
+      });
+
+      alert("Sign up successful!");
+      navigate("/");
+    } catch (err) {
+      console.log(err);
+      setError(
+        err.response?.data?.message ||
+          err.message ||
+          "Google signup failed"
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen flex justify-center items-center bg-gray-100">
