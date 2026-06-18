@@ -1,8 +1,5 @@
 import { useState } from "react";
-import axios from "axios";
-import { BASE_URL } from "../../config/api";
-
-const RAZORPAY_KEY = "rzp_test_SL2c0HhDhEtqp1";
+import API from "../../config/api";
 
 const PaymentModal = ({ order, onClose, onSuccess }) => {
   const [method, setMethod] = useState("UPI");
@@ -39,7 +36,7 @@ const PaymentModal = ({ order, onClose, onSuccess }) => {
 
       // ================= COD =================
       if (method === "Cash on Delivery") {
-        await axios.patch(`${BASE_URL}/orders/${order.id}`, {
+        await API.patch(`/orders/${order._id || order.id}`, {
           paymentStatus: "Pending",
           paymentMethod: "Cash on Delivery",
           placedAt: now,
@@ -61,32 +58,48 @@ const PaymentModal = ({ order, onClose, onSuccess }) => {
         return;
       }
 
+      // 1. Create Razorpay Order on the backend
+      const payOrderRes = await API.post("/payments/create-order", {
+        orderId: order._id || order.id,
+      });
+
+      const { success: paySuccess, data: payData } = payOrderRes.data;
+
+      if (!paySuccess || !payData) {
+        alert(payOrderRes.data.message || "Failed to initiate payment");
+        setLoading(false);
+        return;
+      }
+
       // ================= RAZORPAY =================
       const options = {
-        key: RAZORPAY_KEY,
-        amount: totalAmount * 100, // paise
-        currency: "INR",
+        key: payData.keyId,
+        amount: payData.razorpayOrder.amount,
+        currency: payData.razorpayOrder.currency,
         name: "T-ZONE",
-        description: `Order #${order.id}`,
+        description: `Order #${order.orderId || order.id}`,
+        order_id: payData.razorpayOrder.id,
 
         handler: async function (response) {
           try {
-            await axios.patch(`${BASE_URL}/orders/${order.id}`, {
-              paymentStatus: "Paid",
-              paymentMethod: method,
-              paymentId: response.razorpay_payment_id,
-              paidAt: new Date().toISOString(),
+            // 2. Verify Payment on the backend (handles signature verification & stock updates)
+            const verifyRes = await API.post("/payments/verify", {
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+              orderId: order._id || order.id,
             });
 
-            alert("Payment Successful ✅");
-
-            setLoading(false);
-
-            // ✅ ONLY success (no double close bug)
-            onSuccess?.();
+            if (verifyRes.data.success) {
+              alert("Payment Successful ✅");
+              onSuccess?.();
+            } else {
+              alert(verifyRes.data.message || "Payment verification failed");
+              setLoading(false);
+            }
           } catch (err) {
-            console.error(err);
-            alert("Error updating payment status");
+            console.error("Verification error:", err);
+            alert(err.response?.data?.message || "Error updating payment status");
             setLoading(false);
           }
         },
@@ -96,6 +109,11 @@ const PaymentModal = ({ order, onClose, onSuccess }) => {
             alert("Payment Cancelled ❌");
             setLoading(false);
           },
+        },
+
+        prefill: {
+          email: order.userEmail || "",
+          contact: order.phone || "",
         },
 
         theme: {

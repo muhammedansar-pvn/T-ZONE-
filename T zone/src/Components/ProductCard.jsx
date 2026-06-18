@@ -114,12 +114,19 @@ const ProductCard = ({ product }) => {
 
       {/* ⭐ Rating */}
       <div className="flex justify-center items-center gap-1 mt-1 text-yellow-400 text-xs">
-        <FaStar />
-        <FaStar />
-        <FaStar />
-        <FaStar />
-        <FaStar className="text-gray-300" />
-        <span className="text-gray-500 ml-1">(4.0)</span>
+        {[1, 2, 3, 4, 5].map((star) => (
+          <FaStar
+            key={star}
+            className={
+              star <= Math.round(product.averageRating || 0)
+                ? "text-yellow-400"
+                : "text-gray-300 dark:text-gray-600"
+            }
+          />
+        ))}
+        <span className="text-gray-500 ml-1">
+          ({(product.averageRating || 0).toFixed(1)})
+        </span>
       </div>
 
       {/* 💰 Price */}

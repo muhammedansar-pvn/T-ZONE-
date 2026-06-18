@@ -2,6 +2,7 @@
 // This controller handles fetching (with search, category, and pagination) and viewing details of products.
 
 const Product = require("../models/Product");
+const Review = require("../models/Review");
 const AppError = require("../utils/AppError");
 
 // 🔹 Get All Products (with optional pagination, search, and category filtering)
@@ -59,11 +60,44 @@ const getProducts = async (req, res) => {
     products = await Product.find(filter);
   }
 
+  // Fetch review statistics for the returned products
+  const productIds = products.map((p) => p._id);
+  const ratings = await Review.aggregate([
+    { $match: { productId: { $in: productIds } } },
+    {
+      $group: {
+        _id: "$productId",
+        averageRating: { $avg: "$rating" },
+        reviewsCount: { $sum: 1 },
+      },
+    },
+  ]);
+
+  const ratingsMap = {};
+  ratings.forEach((r) => {
+    ratingsMap[r._id.toString()] = {
+      averageRating: Number(r.averageRating.toFixed(1)),
+      reviewsCount: r.reviewsCount,
+    };
+  });
+
+  const productsWithRatings = products.map((product) => {
+    const ratingData = ratingsMap[product._id.toString()] || {
+      averageRating: 0,
+      reviewsCount: 0,
+    };
+    return {
+      ...product.toObject(),
+      averageRating: ratingData.averageRating,
+      reviewsCount: ratingData.reviewsCount,
+    };
+  });
+
   // 6. Build the API response object
   const responseBody = {
     success: true,
-    count: products.length,
-    products: products,
+    count: productsWithRatings.length,
+    products: productsWithRatings,
   };
 
   // Include pagination information if it was computed
@@ -86,7 +120,21 @@ const getProductById = async (req, res) => {
     throw new AppError("Product not found", 404);
   }
 
-  return res.json(product);
+  // Get review statistics
+  const reviews = await Review.find({ productId });
+  let averageRating = 0;
+  if (reviews.length > 0) {
+    const sum = reviews.reduce((acc, r) => acc + r.rating, 0);
+    averageRating = Number((sum / reviews.length).toFixed(1));
+  }
+
+  const productObj = {
+    ...product.toObject(),
+    averageRating,
+    reviewsCount: reviews.length,
+  };
+
+  return res.json(productObj);
 };
 
 module.exports = {
