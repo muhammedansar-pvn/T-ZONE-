@@ -66,22 +66,21 @@ const toggleBlockUser = async (req, res) => {
   });
 };
 
-// 🔹 Delete User (Soft Delete - Admin)
-// Path: DELETE /api/admin/users/:id
+// 🔹 Delete User (Admin / Self)
+// Path: DELETE /api/admin/users/:id or DELETE /api/users/:id
 const deleteUser = async (req, res) => {
-  const user = await User.findByIdAndUpdate(
-    req.params.id,
-    { isDeleted: true },
-    { new: true }
-  );
+  const user = await User.findById(req.params.id);
 
   if (!user) {
     throw new AppError("User not found", 404);
   }
 
+  user.isDeleted = true;
+  await user.save();
+
   return res.status(200).json({
     success: true,
-    message: "User deleted successfully",
+    message: "User successfully deleted",
   });
 };
 
