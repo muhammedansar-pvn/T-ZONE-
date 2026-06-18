@@ -1,7 +1,12 @@
-const express=require("express")
-const cors= require("cors")
-const cookieParser = require("cookie-parser")
-const dotenv=require("dotenv")
+const express = require("express");
+const cors = require("cors");
+const cookieParser = require("cookie-parser");
+const dotenv = require("dotenv");
+const path = require("path");
+
+// Load environment variables immediately at startup
+dotenv.config({ path: path.join(__dirname, "../.env") });
+
 const connectDB = require("./config/db");
 const authRoutes = require("./routes/authRoutes");
 const productRoutes = require("./routes/productRoutes");
@@ -12,11 +17,8 @@ const userRoutes = require("./routes/userRoutes");
 const paymentRoutes = require("./routes/paymentRoutes");
 const adminRoutes = require("./routes/adminRoutes");
 
-
-dotenv.config()
-
 connectDB();
-const app= express()
+const app = express();
 
 const allowedOrigins = process.env.ALLOWED_ORIGINS.split(",");
 
