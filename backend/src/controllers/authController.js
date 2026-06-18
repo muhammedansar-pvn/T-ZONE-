@@ -31,7 +31,7 @@ const sendCookie = (res, token) => {
 // 🔹 Register User
 // Path: POST /api/auth/register
 const registerUser = async (req, res) => {
-  const { name, username, email, password } = req.body;
+  const { name, username, email, password, mobile, address } = req.body;
 
   // 1. Check required inputs
   if ((!name && !username) || !email || !password) {
@@ -57,6 +57,8 @@ const registerUser = async (req, res) => {
     name: name || username,
     email,
     password: hashedPassword,
+    mobile: mobile || "",
+    address: address || "",
     isVerified: false, // Must verify email first
     verificationToken: token,
     verificationTokenExpires: expires,

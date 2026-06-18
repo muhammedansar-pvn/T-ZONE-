@@ -120,16 +120,10 @@ const handleSubmit = async (e) => {
       address: form.address.trim(),
     });
 
-    // Save token
-    localStorage.setItem("token", data.token);
+    alert(data.message || "Registration Successful! Please check your email to verify your account.");
 
-    // Login user into context
-    login(data.user, data.token);
-
-    alert("Registration Successful");
-
-    // Redirect to home page
-    navigate("/");
+    // Redirect to login page
+    navigate("/login");
   } catch (error) {
     setError(error.message || "Registration failed");
   } finally {

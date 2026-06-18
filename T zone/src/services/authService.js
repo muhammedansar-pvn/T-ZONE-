@@ -31,12 +31,9 @@ export const registerUser = async (userData) => {
       username: userData.name,
       email: userData.email,
       password: userData.password,
+      mobile: userData.mobile,
+      address: userData.address,
     });
-
-    const { token } = res.data;
-    if (token) {
-      localStorage.setItem("token", token);
-    }
 
     return res.data;
   } catch (error) {
