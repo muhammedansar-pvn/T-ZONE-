@@ -62,26 +62,6 @@ const Users = () => {
     );
   };
 
-  /* ================= DELETE USER ================= */
-  const deleteUser = async user => {
-    if (user.role === "admin") {
-      alert("Cannot delete admin user");
-      return;
-    }
-
-    if (!window.confirm("Delete this user?"))
-      return;
-
-    const userId = user.id || user._id;
-
-    await API.delete(
-      `/users/${userId}`
-    );
-
-    setUsers(prev =>
-      prev.filter(u => (u.id || u._id) !== userId)
-    );
-  };
 
   /* ================= ROLE BADGE STYLE ================= */
   const getRoleStyle = role => {
@@ -182,15 +162,6 @@ const Users = () => {
                         {user.isBlocked
                           ? "Unblock"
                           : "Block"}
-                      </button>
-
-                      <button
-                        onClick={() =>
-                          deleteUser(user)
-                        }
-                        className="bg-red-600 text-white px-3 py-1 rounded text-sm"
-                      >
-                        Delete
                       </button>
                     </>
                   )}
