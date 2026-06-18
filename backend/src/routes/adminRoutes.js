@@ -21,7 +21,6 @@ const {
   getAllUsers,
   updateUserRole,
   toggleBlockUser,
-  deleteUser,
 } = require("../controllers/adminController/adminUserController");
 
 const {
@@ -50,6 +49,5 @@ router.delete("/products/:id", deleteProduct);
 router.get("/users", getAllUsers);
 router.put("/users/:id/role", updateUserRole);
 router.put("/users/:id/block", toggleBlockUser);
-router.delete("/users/:id", deleteUser);
 
 module.exports = router;

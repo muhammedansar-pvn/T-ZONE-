@@ -66,27 +66,8 @@ const toggleBlockUser = async (req, res) => {
   });
 };
 
-// 🔹 Delete User (Admin / Self)
-// Path: DELETE /api/admin/users/:id or DELETE /api/users/:id
-const deleteUser = async (req, res) => {
-  const user = await User.findById(req.params.id);
-
-  if (!user) {
-    throw new AppError("User not found", 404);
-  }
-
-  user.isDeleted = true;
-  await user.save();
-
-  return res.status(200).json({
-    success: true,
-    message: "User successfully deleted",
-  });
-};
-
 module.exports = {
   getAllUsers,
   updateUserRole,
   toggleBlockUser,
-  deleteUser,
 };
