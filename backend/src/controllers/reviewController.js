@@ -1,4 +1,5 @@
 const Review = require("../models/Review");
+const User = require("../models/User");
 const AppError = require("../utils/AppError");
 
 // 🔹 Add or Update a Review for a Product
@@ -7,11 +8,16 @@ const addProductReview = async (req, res) => {
   const { rating, comment } = req.body;
   const productId = req.params.id;
   const userId = req.user.id;
-  const name = req.user.name || req.user.username;
 
   if (!rating || !comment) {
     throw new AppError("Rating and comment are required", 400);
   }
+
+  const dbUser = await User.findById(userId);
+  if (!dbUser) {
+    throw new AppError("User not found", 404);
+  }
+  const name = dbUser.name || dbUser.username || "Anonymous";
 
   // 1. Check if the user already reviewed this product
   let review = await Review.findOne({ productId, userId });
