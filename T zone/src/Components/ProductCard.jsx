@@ -112,18 +112,19 @@ const ProductCard = ({ product }) => {
         <p className="text-xs text-gray-500 mt-1">{product.brand}</p>
       )}
 
-      {/* ⭐ Rating */}
+      {/* ⭐ Dynamic Rating (Renders 5 stars: filled yellow if within rounded average, gray otherwise) */}
       <div className="flex justify-center items-center gap-1 mt-1 text-yellow-400 text-xs">
         {[1, 2, 3, 4, 5].map((star) => (
           <FaStar
             key={star}
             className={
               star <= Math.round(product.averageRating || 0)
-                ? "text-yellow-400"
-                : "text-gray-300 dark:text-gray-600"
+                ? "text-yellow-400" // Filled yellow star
+                : "text-gray-300 dark:text-gray-600" // Empty gray star
             }
           />
         ))}
+        {/* Displays average rating value formatted to one decimal point */}
         <span className="text-gray-500 ml-1">
           ({(product.averageRating || 0).toFixed(1)})
         </span>

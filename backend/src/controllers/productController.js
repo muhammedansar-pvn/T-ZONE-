@@ -62,25 +62,32 @@ const getProducts = async (req, res) => {
 
   // Fetch review statistics for the returned products
   const productIds = products.map((p) => p._id);
+  
+  // We use MongoDB aggregation to find review stats for all returned products in a single database call.
+  // This prevents the N+1 query problem (making a separate DB request for each product's reviews).
   const ratings = await Review.aggregate([
+    // Step 1: Filter reviews to only those matching our list of product IDs
     { $match: { productId: { $in: productIds } } },
+    // Step 2: Group reviews by their productId and calculate the average rating and total count
     {
       $group: {
-        _id: "$productId",
-        averageRating: { $avg: "$rating" },
-        reviewsCount: { $sum: 1 },
+        _id: "$productId", // Group by the productId field
+        averageRating: { $avg: "$rating" }, // Calculate average of the 'rating' field
+        reviewsCount: { $sum: 1 }, // Count total reviews in each group (adding 1 for each matching review)
       },
     },
   ]);
 
+  // Convert the aggregation array result into a key-value map for fast lookup by productId
   const ratingsMap = {};
   ratings.forEach((r) => {
     ratingsMap[r._id.toString()] = {
-      averageRating: Number(r.averageRating.toFixed(1)),
+      averageRating: Number(r.averageRating.toFixed(1)), // Keep 1 decimal place (e.g. 4.3)
       reviewsCount: r.reviewsCount,
     };
   });
 
+  // Map the original products array to append their respective average rating and reviews count
   const productsWithRatings = products.map((product) => {
     const ratingData = ratingsMap[product._id.toString()] || {
       averageRating: 0,
