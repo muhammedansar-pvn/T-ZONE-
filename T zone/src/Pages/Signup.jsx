@@ -259,8 +259,8 @@ const handleSubmit = async (e) => {
             <label htmlFor="confirmPassword">Confirm Password</label>
             <input id="confirmPassword" name="confirmPassword" type="password" value={form.confirmPassword} onChange={handleChange} className="w-full mb-6 p-2 border rounded" />
 
-            <button type="submit" className="w-full bg-black text-white py-2 rounded">
-              Send OTP
+            <button type="submit" disabled={loading} className="w-full bg-black text-white py-2 rounded disabled:opacity-60">
+              {loading ? "Registering..." : "Register"}
             </button>
 
             <button
