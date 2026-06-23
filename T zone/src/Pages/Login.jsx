@@ -145,11 +145,20 @@ const Login = () => {
           name="password"
           type="password"
           placeholder="Enter your password"
-          className="w-full mb-6 p-2 border rounded"
+          className="w-full mb-2 p-2 border rounded"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
         />
+
+        <div className="flex justify-end mb-6">
+          <Link
+            to="/forgot-password"
+            className="text-xs text-yellow-500 hover:underline"
+          >
+            Forgot Password?
+          </Link>
+        </div>
 
         <button
           type="submit"

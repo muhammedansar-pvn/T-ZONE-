@@ -11,12 +11,14 @@ const {
   verifyEmail,
   forgotPassword,
   resetPassword,
+  refreshSession,
 } = require("../controllers/authController");
 
 router.post("/register", registerUser);
 router.post("/login", loginUser);
 router.post("/logout", logout);
 router.post("/google-login", googleLogin);
+router.post("/refresh", refreshSession);
 router.get("/profile", protect, getProfile);
 
 // Email verification and password reset routes

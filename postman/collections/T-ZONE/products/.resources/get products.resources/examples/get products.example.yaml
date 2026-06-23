@@ -1,0 +1,274 @@
+$kind: http-example
+request:
+  url: http://localhost:5000/api/products
+  method: GET
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    X-Powered-By: Express
+    Vary: Origin
+    Access-Control-Allow-Credentials: "true"
+    Content-Type: application/json; charset=utf-8
+    Content-Length: "6396"
+    ETag: W/"18fc-YA7C/UEFZWrONaqUbEO0J9u9HDs"
+    Date: Thu, 18 Jun 2026 10:08:10 GMT
+    Connection: keep-alive
+    Keep-Alive: timeout=5
+  body:
+    type: text
+    content: |-
+      {
+          "success": true,
+          "count": 11,
+          "products": [
+              {
+                  "brand": "",
+                  "costPrice": 0,
+                  "_id": "6a1e716b23a9c87484eaf0a5",
+                  "title": "Apple Watch Ultra",
+                  "description": "Smart Watch",
+                  "price": 49999,
+                  "image": "https://www.apple.com/assets-www/en_WW/watch/product_tile/large/se_32690d524_2x.png",
+                  "category": "Smart Watch",
+                  "isDeleted": false,
+                  "createdAt": "2026-06-02T06:00:11.612Z",
+                  "updatedAt": "2026-06-05T04:55:44.527Z",
+                  "__v": 0,
+                  "images": [
+                      "https://www.apple.com/assets-www/en_WW/watch/product_tile/large/se_32690d524_2x.png"
+                  ],
+                  "name": "Apple Watch Ultra",
+                  "stock": 38,
+                  "id": "6a1e716b23a9c87484eaf0a5",
+                  "averageRating": 0,
+                  "reviewsCount": 0
+              },
+              {
+                  "_id": "6a1fe6de6e450175cad857d5",
+                  "title": "rado",
+                  "description": "rado - f1",
+                  "price": 30000,
+                  "image": "https://i.pinimg.com/736x/d7/b1/70/d7b170bf4000eebcbf898a02b79e7609.jpg",
+                  "category": "luxury",
+                  "brand": "",
+                  "costPrice": 0,
+                  "images": [
+                      "https://i.pinimg.com/736x/d7/b1/70/d7b170bf4000eebcbf898a02b79e7609.jpg",
+                      "https://i.pinimg.com/736x/8d/4e/39/8d4e39dc2177476ac12f52c11d13fa8f.jpg"
+                  ],
+                  "isDeleted": false,
+                  "name": "rado",
+                  "stock": 28,
+                  "updatedAt": "2026-06-05T06:42:35.977Z",
+                  "id": "6a1fe6de6e450175cad857d5",
+                  "averageRating": 4,
+                  "reviewsCount": 1
+              },
+              {
+                  "_id": "6a22573fe180c0880df0fcf4",
+                  "title": "Rolex",
+                  "__v": 0,
+                  "brand": "",
+                  "category": "luxury",
+                  "costPrice": 0,
+                  "createdAt": "2026-06-05T04:57:34.744Z",
+                  "description": "limited edition",
+                  "image": "https://i.pinimg.com/736x/b6/06/cd/b606cd879f745eaa99fba5955703ac95.jpg",
+                  "images": [
+                      "https://i.pinimg.com/736x/b6/06/cd/b606cd879f745eaa99fba5955703ac95.jpg"
+                  ],
+                  "isDeleted": false,
+                  "name": "Rolex",
+                  "price": 23000,
+                  "stock": 18,
+                  "updatedAt": "2026-06-18T04:20:53.564Z",
+                  "id": "6a22573fe180c0880df0fcf4",
+                  "averageRating": 0,
+                  "reviewsCount": 0
+              },
+              {
+                  "_id": "6a22573fe180c0880df0fcf5",
+                  "title": "Rolex-48",
+                  "__v": 0,
+                  "brand": "",
+                  "category": "luxury",
+                  "costPrice": 0,
+                  "createdAt": "2026-06-05T04:57:34.820Z",
+                  "description": "nnscjsa",
+                  "image": "https://i.pinimg.com/1200x/22/94/61/229461d3f114e066355da42f1674af68.jpg",
+                  "images": [
+                      "https://i.pinimg.com/1200x/22/94/61/229461d3f114e066355da42f1674af68.jpg",
+                      "https://res.cloudinary.com/dit40na4i/image/upload/v1772707949/gykspwonrpfgtywdrgol.jpg"
+                  ],
+                  "isDeleted": false,
+                  "name": "Rolex-48",
+                  "price": 35000,
+                  "stock": 19,
+                  "updatedAt": "2026-06-05T06:42:36.921Z",
+                  "id": "6a22573fe180c0880df0fcf5",
+                  "averageRating": 0,
+                  "reviewsCount": 0
+              },
+              {
+                  "_id": "6a22573fe180c0880df0fcf6",
+                  "title": "HUBLUT",
+                  "__v": 0,
+                  "brand": "",
+                  "category": "sports",
+                  "costPrice": 0,
+                  "createdAt": "2026-06-05T04:57:35.020Z",
+                  "description": "limited edition",
+                  "image": "https://i.pinimg.com/1200x/0c/f4/be/0cf4beb8947ab18bed03eb052587017d.jpg",
+                  "images": [
+                      "https://i.pinimg.com/1200x/0c/f4/be/0cf4beb8947ab18bed03eb052587017d.jpg",
+                      "https://i.pinimg.com/736x/ea/2b/f8/ea2bf85b12de88af5bd1ec80424ad2ef.jpg",
+                      "https://res.cloudinary.com/dit40na4i/image/upload/v1772773737/u5gkosugb1oewfgagku6.jpg"
+                  ],
+                  "isDeleted": false,
+                  "name": "HUBLUT",
+                  "price": 34000,
+                  "stock": 89,
+                  "updatedAt": "2026-06-16T06:43:59.770Z",
+                  "id": "6a22573fe180c0880df0fcf6",
+                  "averageRating": 0,
+                  "reviewsCount": 0
+              },
+              {
+                  "_id": "6a22573fe180c0880df0fcf7",
+                  "title": "Hublot-g5",
+                  "__v": 0,
+                  "brand": "",
+                  "category": "casual",
+                  "costPrice": 0,
+                  "createdAt": "2026-06-05T04:57:35.109Z",
+                  "description": "dwe f enewdnewfn",
+                  "image": "https://i.pinimg.com/1200x/5b/a9/bc/5ba9bcfd64375acc17fd8de525d5f399.jpg",
+                  "images": [
+                      "https://i.pinimg.com/1200x/5b/a9/bc/5ba9bcfd64375acc17fd8de525d5f399.jpg"
+                  ],
+                  "isDeleted": false,
+                  "name": "Hublot-g5",
+                  "price": 40000,
+                  "stock": 30,
+                  "updatedAt": "2026-06-05T06:42:37.060Z",
+                  "id": "6a22573fe180c0880df0fcf7",
+                  "averageRating": 0,
+                  "reviewsCount": 0
+              },
+              {
+                  "_id": "6a22573fe180c0880df0fcf8",
+                  "title": "G-shoke",
+                  "__v": 0,
+                  "brand": "",
+                  "category": "sports",
+                  "costPrice": 0,
+                  "createdAt": "2026-06-05T04:57:35.203Z",
+                  "description": "sport watch",
+                  "image": "https://i.pinimg.com/736x/fa/c7/0e/fac70e845de14866a260ea8227fba855.jpg",
+                  "images": [
+                      "https://i.pinimg.com/736x/fa/c7/0e/fac70e845de14866a260ea8227fba855.jpg",
+                      "https://res.cloudinary.com/dit40na4i/image/upload/v1772707025/bpjtjxmyeeo85bdb8scc.jpg"
+                  ],
+                  "isDeleted": false,
+                  "name": "G-shoke",
+                  "price": 20000,
+                  "stock": 44,
+                  "updatedAt": "2026-06-17T06:21:22.454Z",
+                  "id": "6a22573fe180c0880df0fcf8",
+                  "averageRating": 0,
+                  "reviewsCount": 0
+              },
+              {
+                  "_id": "6a225740e180c0880df0fcf9",
+                  "title": "some items",
+                  "__v": 0,
+                  "brand": "",
+                  "category": "sports",
+                  "costPrice": 0,
+                  "createdAt": "2026-06-05T04:57:35.294Z",
+                  "description": "tfygfghfhggj",
+                  "image": "https://res.cloudinary.com/dit40na4i/image/upload/v1772773681/pre9ircmxskttdkfszkl.jpg",
+                  "images": [
+                      "https://res.cloudinary.com/dit40na4i/image/upload/v1772773681/pre9ircmxskttdkfszkl.jpg",
+                      "https://res.cloudinary.com/dit40na4i/image/upload/v1772773688/o5qyneoaxf7txg6ayayf.jpg",
+                      "https://res.cloudinary.com/dit40na4i/image/upload/v1772773697/uz0fo3cbnhul5vyqnqgg.jpg"
+                  ],
+                  "isDeleted": false,
+                  "name": "some items",
+                  "price": 30000,
+                  "stock": 87,
+                  "updatedAt": "2026-06-16T06:34:50.751Z",
+                  "id": "6a225740e180c0880df0fcf9",
+                  "averageRating": 0,
+                  "reviewsCount": 0
+              },
+              {
+                  "_id": "6a225740e180c0880df0fcfa",
+                  "title": "TITAN",
+                  "__v": 0,
+                  "brand": "",
+                  "category": "casual",
+                  "costPrice": 0,
+                  "createdAt": "2026-06-05T04:57:35.374Z",
+                  "description": "Titan\nTitan Minimalist Quartz Analog with Date Black Dial Black Metal Strap",
+                  "image": "https://m.media-amazon.com/images/I/71DSA+AvbVL._AC_UL480_FMwebp_QL65_.jpg",
+                  "images": [
+                      "https://m.media-amazon.com/images/I/71DSA+AvbVL._AC_UL480_FMwebp_QL65_.jpg"
+                  ],
+                  "isDeleted": false,
+                  "name": "TITAN",
+                  "price": 25000,
+                  "stock": 17,
+                  "updatedAt": "2026-06-05T06:42:37.270Z",
+                  "id": "6a225740e180c0880df0fcfa",
+                  "averageRating": 0,
+                  "reviewsCount": 0
+              },
+              {
+                  "_id": "6a225740e180c0880df0fcfb",
+                  "title": "FASTTRACK",
+                  "__v": 0,
+                  "brand": "",
+                  "category": "casual",
+                  "costPrice": 0,
+                  "createdAt": "2026-06-05T04:57:35.459Z",
+                  "description": "Fastrack\nTees Analog Grey Dial Unisex-Adult Watch-68011PP08",
+                  "image": "https://m.media-amazon.com/images/I/41dannBuneL._AC_UL480_FMwebp_QL65_.jpg",
+                  "images": [
+                      "https://m.media-amazon.com/images/I/41dannBuneL._AC_UL480_FMwebp_QL65_.jpg"
+                  ],
+                  "isDeleted": false,
+                  "name": "FASTTRACK",
+                  "price": 10000,
+                  "stock": 23,
+                  "updatedAt": "2026-06-05T06:42:37.355Z",
+                  "id": "6a225740e180c0880df0fcfb",
+                  "averageRating": 0,
+                  "reviewsCount": 0
+              },
+              {
+                  "_id": "6a225aaf44b9213b92ec7e5e",
+                  "title": "some item",
+                  "description": "d3",
+                  "price": 30000,
+                  "image": "https://res.cloudinary.com/dit40na4i/image/upload/v1780636321/mt2qqej8xfpsswqgkita.jpg",
+                  "images": [
+                      "https://res.cloudinary.com/dit40na4i/image/upload/v1780636321/mt2qqej8xfpsswqgkita.jpg"
+                  ],
+                  "name": "some item",
+                  "stock": 30,
+                  "brand": "",
+                  "costPrice": 0,
+                  "category": "sports",
+                  "isDeleted": false,
+                  "createdAt": "2026-06-05T05:12:15.030Z",
+                  "updatedAt": "2026-06-05T05:12:15.030Z",
+                  "__v": 0,
+                  "id": "6a225aaf44b9213b92ec7e5e",
+                  "averageRating": 0,
+                  "reviewsCount": 0
+              }
+          ]
+      }
+order: 1000

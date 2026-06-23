@@ -1,0 +1,13 @@
+$kind: http-request
+url: http://localhost:5000/api/cart/update
+method: PUT
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+        "productId":"6a22573fe180c0880df0fcf7",
+        "quantity":2
+    }
+order: 3000

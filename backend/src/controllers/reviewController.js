@@ -2,7 +2,7 @@ const Review = require("../models/Review");
 const User = require("../models/User");
 const AppError = require("../utils/AppError");
 
-// 🔹 Add or Update a Review for a Product
+
 // Path: POST /api/products/:id/reviews
 const addProductReview = async (req, res) => {
   const { rating, comment } = req.body;

@@ -7,6 +7,8 @@ import Watches from "./Pages/Watches";
 import Cart from "./Pages/Cart";
 import Login from "./Pages/Login";
 import Signup from "./Pages/Signup";
+import ForgotPassword from "./Pages/ForgotPassword";
+import ResetPassword from "./Pages/ResetPassword";
 import ProductView from "./Pages/ProductView";
 import Checkout from "./Pages/Checkout";
 import OrderSuccess from "./Pages/OrderSuccess";
@@ -60,6 +62,8 @@ const AppRoutes = () => {
           <Route path="cart" element={<Cart />} />
           <Route path="login" element={<Login />} />
           <Route path="signup" element={<Signup />} />
+          <Route path="forgot-password" element={<ForgotPassword />} />
+          <Route path="reset-password/:token" element={<ResetPassword />} />
           <Route path="product/:id" element={<ProductView />} />
 
           {/* PROTECTED */}

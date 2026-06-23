@@ -1,0 +1,5 @@
+$kind: collection
+name: T-ZONE
+variables:
+  - key: supabase_service_role_api_key_05zt
+    secret: true

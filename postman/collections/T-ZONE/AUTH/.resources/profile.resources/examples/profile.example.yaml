@@ -1,0 +1,42 @@
+$kind: http-example
+request:
+  url: http://localhost:5000/api/auth/profile
+  method: GET
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    X-Powered-By: Express
+    Vary: Origin
+    Access-Control-Allow-Credentials: "true"
+    Content-Type: application/json; charset=utf-8
+    Content-Length: "422"
+    ETag: W/"1a6-AYwiDVRDSjVuZYo7lOjY9DmQpJA"
+    Date: Thu, 18 Jun 2026 10:06:40 GMT
+    Connection: keep-alive
+    Keep-Alive: timeout=5
+  body:
+    type: text
+    content: |-
+      {
+          "success": true,
+          "user": {
+              "_id": "6a33c2d8d14dd7e06e45a78c",
+              "username": "moidu",
+              "email": "muhiyadheensj@gmail.com",
+              "mobile": "7994050309",
+              "address": "userData.address",
+              "profileImg": "",
+              "profileThumbImg": "",
+              "isDeleted": false,
+              "role": "user",
+              "name": "muhiyudheen",
+              "isBlocked": false,
+              "isVerified": true,
+              "accountCreatedDate": "2026-06-18T10:05:12.968Z",
+              "createdAt": "2026-06-18T10:05:12.979Z",
+              "updatedAt": "2026-06-18T10:05:12.979Z",
+              "__v": 0
+          }
+      }
+order: 1000

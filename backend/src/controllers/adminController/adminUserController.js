@@ -1,11 +1,9 @@
-// controllers/adminController/adminUserController.js
-// Basic admin user controller for managing users and administrators
+
 
 const User = require("../../models/User");
 const AppError = require("../../utils/AppError");
 
-// 🔹 Get All Users (Admin)
-// Path: GET /api/admin/users
+
 const getAllUsers = async (req, res) => {
   const users = await User.find({ isDeleted: false }).select("-password").sort({ createdAt: -1 });
 
@@ -16,8 +14,7 @@ const getAllUsers = async (req, res) => {
   });
 };
 
-// 🔹 Update User Role (Admin)
-// Path: PUT /api/admin/users/:id/role
+
 const updateUserRole = async (req, res) => {
   const { role } = req.body;
 
@@ -42,8 +39,7 @@ const updateUserRole = async (req, res) => {
   });
 };
 
-// 🔹 Toggle Block Status of User (Admin)
-// Path: PUT /api/admin/users/:id/block
+
 const toggleBlockUser = async (req, res) => {
   const user = await User.findById(req.params.id);
 

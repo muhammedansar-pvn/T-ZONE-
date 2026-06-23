@@ -239,7 +239,7 @@ const EditProduct = () => {
       const duplicate = products.find(
         (p) =>
           p.name?.toLowerCase() === currentForm.name.toLowerCase() &&
-          p.id !== id
+          (p._id || p.id) !== id
       );
 
       if (duplicate) {

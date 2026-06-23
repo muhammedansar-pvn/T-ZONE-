@@ -1,0 +1,30 @@
+$kind: http-example
+request:
+  url: http://localhost:5000/api/auth/register
+  method: POST
+  headers:
+    Content-Type: application/json
+  body:
+    type: json
+    content: '{"name":"muhiyudheen","username":"moidu","email":"muhiyadheensj@gmail.com","password":"907856","mobile":"7994050309","address":"userData.address"}'
+response:
+  statusCode: 201
+  statusText: Created
+  headers:
+    X-Powered-By: Express
+    Vary: Origin
+    Access-Control-Allow-Credentials: "true"
+    Content-Type: application/json; charset=utf-8
+    Content-Length: "73"
+    ETag: W/"49-6QwUQc55MJLNnVextOpWFUEgB2M"
+    Date: Thu, 18 Jun 2026 10:05:13 GMT
+    Connection: keep-alive
+    Keep-Alive: timeout=5
+  body:
+    type: text
+    content: |-
+      {
+          "success": true,
+          "message": "Registration successful! You can now log in."
+      }
+order: 1000

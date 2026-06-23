@@ -1,0 +1,9 @@
+$kind: http-request
+name: get product by id
+url: http://localhost:5000/api/products/6a1e716b23a9c87484eaf0a5
+method: GET
+body:
+  type: json
+  content: ""
+examples: ./.resources/get product by id.resources/examples
+order: 2000

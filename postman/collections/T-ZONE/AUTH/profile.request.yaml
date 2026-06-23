@@ -1,0 +1,15 @@
+$kind: http-request
+name: profile
+url: http://localhost:5000/api/auth/profile
+method: GET
+body:
+  type: json
+  content: "{\r
+
+    \  \"email\": \"muhiyadheensj@gmail.com\",\r
+
+    \  \"password\": \"907856\"\r
+
+    }"
+examples: ./.resources/profile.resources/examples
+order: 3000

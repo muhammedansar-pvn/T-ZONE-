@@ -1,0 +1,9 @@
+$kind: http-request
+name: get products
+url: http://localhost:5000/api/products
+method: GET
+body:
+  type: json
+  content: ""
+examples: ./.resources/get products.resources/examples
+order: 1000

@@ -1,0 +1,10 @@
+$kind: http-request
+url: http://localhost:5000/api/auth/register
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: '{"name":"muhiyudheen","username":"moidu","email":"muhiyadheensj@gmail.com","password":"907856","mobile":"7994050309","address":"userData.address"}'
+examples: ./.resources/register.resources/examples
+order: 1000

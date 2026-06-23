@@ -1,0 +1,43 @@
+$kind: http-example
+request:
+  url: http://localhost:5000/api/products/6a1e716b23a9c87484eaf0a5
+  method: GET
+response:
+  statusCode: 200
+  statusText: OK
+  headers:
+    X-Powered-By: Express
+    Vary: Origin
+    Access-Control-Allow-Credentials: "true"
+    Content-Type: application/json; charset=utf-8
+    Content-Length: "554"
+    ETag: W/"22a-u8BZKghtxVNjummw1RR+lCyj2GI"
+    Date: Thu, 18 Jun 2026 10:10:51 GMT
+    Connection: keep-alive
+    Keep-Alive: timeout=5
+  body:
+    type: text
+    content: |-
+      {
+          "brand": "",
+          "costPrice": 0,
+          "_id": "6a1e716b23a9c87484eaf0a5",
+          "title": "Apple Watch Ultra",
+          "description": "Smart Watch",
+          "price": 49999,
+          "image": "https://www.apple.com/assets-www/en_WW/watch/product_tile/large/se_32690d524_2x.png",
+          "category": "Smart Watch",
+          "isDeleted": false,
+          "createdAt": "2026-06-02T06:00:11.612Z",
+          "updatedAt": "2026-06-05T04:55:44.527Z",
+          "__v": 0,
+          "images": [
+              "https://www.apple.com/assets-www/en_WW/watch/product_tile/large/se_32690d524_2x.png"
+          ],
+          "name": "Apple Watch Ultra",
+          "stock": 38,
+          "id": "6a1e716b23a9c87484eaf0a5",
+          "averageRating": 0,
+          "reviewsCount": 0
+      }
+order: 1000

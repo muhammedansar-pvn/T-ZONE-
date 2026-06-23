@@ -1,0 +1,9 @@
+$kind: http-request
+url: http://localhost:5000/api/payments/create-order
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: '{"orderId":"ORD-1001","amount":2000}'
+order: 1000

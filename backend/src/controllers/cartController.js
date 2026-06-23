@@ -5,27 +5,26 @@ const Cart = require("../models/Cart");
 const Product = require("../models/Product");
 const AppError = require("../utils/AppError");
 
-// 🔹 Add a product to the user's cart
-// Path: POST /api/cart
+
 const addToCart = async (req, res) => {
   const { productId, quantity = 1 } = req.body;
   const userId = req.user.id;
 
-  // 1. Convert quantity to number to be safe
+
   const parsedQuantity = Number(quantity);
 
-  // 2. Check if this product is already in the user's cart
+
   let cartItem = await Cart.findOne({ 
     userId: userId, 
     productId: productId 
   });
 
   if (cartItem) {
-    // If the product is already in the cart, increase its quantity
+    
     cartItem.quantity = cartItem.quantity + parsedQuantity;
     await cartItem.save();
   } else {
-    // If it's a new product, create a new cart item record
+   
     cartItem = await Cart.create({
       userId: userId,
       productId: productId,

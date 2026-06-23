@@ -1,0 +1,27 @@
+$kind: http-example
+request:
+  url: http://localhost:5000/api/wishlist
+  method: GET
+  body:
+    type: json
+    content: ""
+response:
+  statusCode: 401
+  statusText: Unauthorized
+  headers:
+    X-Powered-By: Express
+    Access-Control-Allow-Origin: "*"
+    Content-Type: application/json; charset=utf-8
+    Content-Length: "47"
+    ETag: W/"2f-VwoH6g/NSC3v0iJZlTnsI5fj3wE"
+    Date: Fri, 05 Jun 2026 08:36:44 GMT
+    Connection: keep-alive
+    Keep-Alive: timeout=5
+  body:
+    type: text
+    content: |-
+      {
+          "success": false,
+          "message": "No token provided"
+      }
+order: 1000

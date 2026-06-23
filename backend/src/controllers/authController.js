@@ -9,18 +9,37 @@ const crypto = require("crypto");
 const { sendMail } = require("../config/mail");
 const AppError = require("../utils/AppError");
 
-// Helper: Generate JWT Token for sessions
-const generateToken = (user) => {
+// Helper: Generate Access JWT Token for sessions (expires in 15m)
+const generateAccessToken = (user) => {
   return jwt.sign(
     { id: user._id, role: user.role },
     process.env.JWT_SECRET,
+    { expiresIn: "15m" }
+  );
+};
+
+// Helper: Generate Refresh JWT Token for sessions (expires in 7d)
+const generateRefreshToken = (user) => {
+  return jwt.sign(
+    { id: user._id },
+    process.env.JWT_REFRESH_SECRET,
     { expiresIn: "7d" }
   );
 };
 
-// Helper: Set JWT token as an HTTP-only browser cookie
-const sendCookie = (res, token) => {
+// Helper: Set Access JWT token as an HTTP-only browser cookie
+const sendAccessTokenCookie = (res, token) => {
   res.cookie("token", token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+    maxAge: 15 * 60 * 1000, // 15 minutes
+  });
+};
+
+// Helper: Set Refresh JWT token as an HTTP-only browser cookie
+const sendRefreshTokenCookie = (res, token) => {
+  res.cookie("refreshToken", token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
@@ -51,6 +70,8 @@ const registerUser = async (req, res) => {
   const token = crypto.randomBytes(20).toString("hex");
   const expires = Date.now() + 24 * 60 * 60 * 1000;
 
+  const autoVerify = process.env.AUTO_VERIFY === "true" || process.env.NODE_ENV !== "production";
+
   // 5. Create user account
   const user = await User.create({
     username: username || name,
@@ -59,24 +80,28 @@ const registerUser = async (req, res) => {
     password: hashedPassword,
     mobile: mobile || "",
     address: address || "",
-    isVerified: false, // Must verify email first
-    verificationToken: token,
-    verificationTokenExpires: expires,
+    isVerified: autoVerify, // Auto-verified if not in production or configured
+    verificationToken: autoVerify ? undefined : token,
+    verificationTokenExpires: autoVerify ? undefined : expires,
   });
 
-  // 6. Send simple verification email
-  const link = `${req.protocol}://${req.get("host")}/api/auth/verify-email/${token}`;
-  await sendMail({
-    to: user.email,
-    subject: "Verify your email address",
-    html: `<h3>Welcome to T-ZONE!</h3>
-           <p>Click the link below to verify your email and activate your account:</p>
-           <p><a href="${link}">${link}</a></p>`,
-  });
+  // 6. Send simple verification email (skip if auto-verified)
+  if (!autoVerify) {
+    const link = `${req.protocol}://${req.get("host")}/api/auth/verify-email/${token}`;
+    await sendMail({
+      to: user.email,
+      subject: "Verify your email address",
+      html: `<h3>Welcome to T-ZONE!</h3>
+             <p>Click the link below to verify your email and activate your account:</p>
+             <p><a href="${link}">${link}</a></p>`,
+    });
+  }
 
   return res.status(201).json({
     success: true,
-    message: "Registration successful! Please check your email to verify.",
+    message: autoVerify
+      ? "Registration successful! You can now log in."
+      : "Registration successful! Please check your email to verify.",
   });
 };
 
@@ -105,13 +130,19 @@ const loginUser = async (req, res) => {
     throw new AppError("Your account is blocked", 403);
   }
 
-  // 4. Generate token and set browser cookie
-  const token = generateToken(user);
-  sendCookie(res, token);
+  // 4. Generate access and refresh tokens, and save refresh token in DB
+  const accessToken = generateAccessToken(user);
+  const refreshToken = generateRefreshToken(user);
+
+  user.refreshToken = refreshToken;
+  await user.save();
+
+  sendAccessTokenCookie(res, accessToken);
+  sendRefreshTokenCookie(res, refreshToken);
 
   return res.json({
     success: true,
-    token,
+    token: accessToken,
     user: {
       id: user._id,
       username: user.username,
@@ -125,7 +156,22 @@ const loginUser = async (req, res) => {
 // 🔹 Logout User
 // Path: POST /api/auth/logout
 const logout = async (req, res) => {
+  try {
+    const refreshToken = req.cookies.refreshToken;
+    if (refreshToken) {
+      const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
+      await User.findByIdAndUpdate(decoded.id, { $unset: { refreshToken: "" } });
+    }
+  } catch (err) {
+    // Ignore verification or database errors during logout
+  }
+
   res.clearCookie("token", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+  });
+  res.clearCookie("refreshToken", {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
@@ -179,12 +225,19 @@ const googleLogin = async (req, res) => {
     throw new AppError("Your account is blocked", 403);
   }
 
-  const token = generateToken(user);
-  sendCookie(res, token);
+  // Generate access and refresh tokens, and save refresh token in DB
+  const accessToken = generateAccessToken(user);
+  const refreshToken = generateRefreshToken(user);
+
+  user.refreshToken = refreshToken;
+  await user.save();
+
+  sendAccessTokenCookie(res, accessToken);
+  sendRefreshTokenCookie(res, refreshToken);
 
   return res.json({
     success: true,
-    token,
+    token: accessToken,
     user: {
       id: user._id,
       username: user.username,
@@ -280,6 +333,40 @@ const resetPassword = async (req, res) => {
   return res.json({ success: true, message: "Password reset successfully! You can now log in." });
 };
 
+// 🔹 Refresh Token Session
+// Path: POST /api/auth/refresh
+const refreshSession = async (req, res) => {
+  const refreshToken = req.cookies?.refreshToken;
+
+  if (!refreshToken) {
+    throw new AppError("Access Denied: No refresh token provided", 401);
+  }
+
+  let decodedPayload;
+  try {
+    decodedPayload = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
+  } catch (error) {
+    throw new AppError("Access Denied: Invalid or expired refresh token", 401);
+  }
+
+  const user = await User.findById(decodedPayload.id);
+  if (!user || user.refreshToken !== refreshToken) {
+    throw new AppError("Access Denied: Invalid or revoked session", 401);
+  }
+
+  if (user.isBlocked) {
+    throw new AppError("Your account is blocked", 403);
+  }
+
+  const accessToken = generateAccessToken(user);
+  sendAccessTokenCookie(res, accessToken);
+
+  return res.json({
+    success: true,
+    token: accessToken,
+  });
+};
+
 module.exports = {
   registerUser,
   loginUser,
@@ -289,4 +376,5 @@ module.exports = {
   verifyEmail,
   forgotPassword,
   resetPassword,
+  refreshSession,
 };

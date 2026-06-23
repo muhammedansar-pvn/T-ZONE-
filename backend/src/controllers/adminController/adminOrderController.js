@@ -1,11 +1,8 @@
-// controllers/adminController/adminOrderController.js
-// Basic admin order controller for handling order management
+
 
 const Order = require("../../models/Order");
 const AppError = require("../../utils/AppError");
 
-// 🔹 Get All Orders (Admin)
-// Path: GET /api/admin/orders
 const getAllOrders = async (req, res) => {
   const orders = await Order.find({ isDeleted: false })
     .populate("userId", "username email name")
@@ -18,8 +15,7 @@ const getAllOrders = async (req, res) => {
   });
 };
 
-// 🔹 Update Order Status (Admin)
-// Path: PUT /api/admin/orders/:id/status
+
 const updateOrderStatus = async (req, res) => {
   const { status } = req.body;
   
@@ -44,8 +40,7 @@ const updateOrderStatus = async (req, res) => {
   });
 };
 
-// 🔹 Delete Order (Soft Delete - Admin)
-// Path: DELETE /api/admin/orders/:id
+
 const deleteOrder = async (req, res) => {
   const order = await Order.findByIdAndUpdate(
     req.params.id,

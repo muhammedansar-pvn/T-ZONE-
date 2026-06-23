@@ -27,25 +27,25 @@ const {
   getDashboardStats,
 } = require("../controllers/adminController/dashboardController");
 
-// Apply authentication and admin authorization to all admin routes
+
 router.use(protect);
 router.use(authorize("admin"));
 
-// 📊 Dashboard Routes
+
 router.get("/dashboard/stats", getDashboardStats);
 
-// 📦 Order Management Routes
+//  Order Management Routes
 router.get("/orders", getAllOrders);
 router.put("/orders/:id/status", updateOrderStatus);
 router.delete("/orders/:id", deleteOrder);
 
-// 🏷️ Product Management Routes
+//  Product Management Routes
 router.get("/products", getAdminProducts);
 router.post("/products", createProduct);
 router.put("/products/:id", updateProduct);
 router.delete("/products/:id", deleteProduct);
 
-// 👥 User Management Routes
+//  User Management Routes
 router.get("/users", getAllUsers);
 router.put("/users/:id/role", updateUserRole);
 router.put("/users/:id/block", toggleBlockUser);

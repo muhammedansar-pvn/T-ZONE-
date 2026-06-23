@@ -33,7 +33,7 @@ const reviewSchema = new mongoose.Schema(
   }
 );
 
-// Prevent multiple reviews from same user on same product
+
 reviewSchema.index({ productId: 1, userId: 1 }, { unique: true });
 
 module.exports = mongoose.model("Review", reviewSchema);
