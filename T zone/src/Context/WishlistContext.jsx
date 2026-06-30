@@ -10,7 +10,7 @@ export const WishlistProvider = ({ children }) => {
   const [wishlist, setWishlist] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  // ✅ Load Wishlist from Database on Login
+  
   useEffect(() => {
     const fetchWishlist = async () => {
       if (!user) {
@@ -40,7 +40,7 @@ export const WishlistProvider = ({ children }) => {
     }
 
     try {
-      // Optimistic Update
+      
       if (!wishlist.find((item) => item._id === product._id)) {
         setWishlist((prev) => [...prev, product]);
       }
@@ -48,7 +48,7 @@ export const WishlistProvider = ({ children }) => {
       await API.post("/wishlist", { productId: product._id });
     } catch (error) {
       console.error("Failed to add to wishlist:", error);
-      // Re-sync wishlist on failure
+      
       const res = await API.get("/wishlist");
       if (res.data?.success) setWishlist(res.data.wishlist);
     }
@@ -56,7 +56,7 @@ export const WishlistProvider = ({ children }) => {
 
   const removeFromWishlist = async (id) => {
     try {
-      // Optimistic Update
+      
       setWishlist((prev) => prev.filter((item) => item._id !== id));
       await API.delete(`/wishlist/${id}`);
     } catch (error) {

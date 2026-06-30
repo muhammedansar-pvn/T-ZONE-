@@ -7,17 +7,17 @@ const PaymentModal = ({ order, onClose, onSuccess }) => {
 
   if (!order) return null;
 
-  // ✅ Safe Paid Check
+  
   const isAlreadyPaid =
     order?.paymentStatus?.toLowerCase() === "paid";
 
-  // ✅ Safe Amount
+  
   const totalAmount = Math.round(
     Number(order?.totalAmount || order?.total || 0)
   );
 
   const handlePayment = async () => {
-    // 🛑 Prevent double click
+    
     if (loading) return;
 
     if (isAlreadyPaid) {
@@ -34,7 +34,7 @@ const PaymentModal = ({ order, onClose, onSuccess }) => {
       setLoading(true);
       const now = new Date().toISOString();
 
-      // ================= COD =================
+      
       if (method === "Cash on Delivery") {
         await API.patch(`/orders/${order._id || order.id}`, {
           paymentStatus: "Pending",
@@ -46,19 +46,19 @@ const PaymentModal = ({ order, onClose, onSuccess }) => {
 
         setLoading(false);
 
-        // ✅ ONLY call success (parent handles close)
+        
         onSuccess?.();
         return;
       }
 
-      // ================= RAZORPAY CHECK =================
+      
       if (!window.Razorpay) {
         alert("Razorpay SDK not loaded. Refresh page.");
         setLoading(false);
         return;
       }
 
-      // 1. Create Razorpay Order on the backend
+      
       const payOrderRes = await API.post("/payments/create-order", {
         orderId: order._id || order.id,
       });
@@ -71,7 +71,7 @@ const PaymentModal = ({ order, onClose, onSuccess }) => {
         return;
       }
 
-      // ================= RAZORPAY =================
+      
       const options = {
         key: payData.keyId,
         amount: payData.razorpayOrder.amount,
@@ -82,7 +82,7 @@ const PaymentModal = ({ order, onClose, onSuccess }) => {
 
         handler: async function (response) {
           try {
-            // 2. Verify Payment on the backend (handles signature verification & stock updates)
+            
             const verifyRes = await API.post("/payments/verify", {
               razorpay_order_id: response.razorpay_order_id,
               razorpay_payment_id: response.razorpay_payment_id,

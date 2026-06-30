@@ -149,7 +149,7 @@ const orderSchema = new mongoose.Schema(
   }
 );
 
-// Virtual for id mapping to orderId
+
 orderSchema.virtual("id")
   .get(function() {
     return this.orderId;
@@ -158,7 +158,7 @@ orderSchema.virtual("id")
     this.orderId = val;
   });
 
-// Pre-validate middleware to calculate totalItems and synchronize prices
+
 orderSchema.pre("validate", function() {
   if (this.products && (!this.totalItems || this.totalItems === 0)) {
     this.totalItems = this.products.reduce((acc, p) => acc + (p.quantity || 1), 0);
@@ -167,5 +167,9 @@ orderSchema.pre("validate", function() {
   this.totalPrice = price;
   this.totalAmount = price;
 });
+
+orderSchema.index({ userId: 1 });
+orderSchema.index({ orderId: 1 }, { unique: true });
+orderSchema.index({ isDeleted: 1 });
 
 module.exports = mongoose.model("Order", orderSchema);

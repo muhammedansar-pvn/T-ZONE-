@@ -33,7 +33,7 @@ const ResetPassword = () => {
       const res = await API.post(`/auth/reset-password/${token}`, { password });
       setMessage(res.data.message || "Password reset successfully!");
       
-      // Redirect to login page after a brief delay
+      
       setTimeout(() => {
         navigate("/login");
       }, 3000);

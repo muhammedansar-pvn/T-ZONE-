@@ -14,7 +14,7 @@ const Login = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // Auto redirect if logged in
+  
   useEffect(() => {
     if (user) {
       navigate(user.role === "admin" ? "/admin" : "/");
@@ -67,12 +67,14 @@ const Login = () => {
     setLoading(true);
     try {
       const result = await signInWithPopup(auth, googleProvider);
-      const firebaseUser = result.user;
+      
+      const idToken = await result.user.getIdToken();
+      console.log("=== GOOGLE ID TOKEN FOR POSTMAN ===");
+      console.log(idToken);
+      console.log("===================================");
 
       const res = await API.post("/auth/google-login", {
-        email: firebaseUser.email,
-        name: firebaseUser.displayName || firebaseUser.email.split("@")[0],
-        googleId: firebaseUser.uid,
+        idToken,
       });
 
       const { token, user: backendUser } = res.data;

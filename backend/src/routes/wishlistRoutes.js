@@ -8,7 +8,7 @@ const {
   removeWishlist,
 } = require("../controllers/wishlistController");
 
-// Protect all wishlist routes
+
 router.use(protect);
 
 router.post("/", addToWishlist);

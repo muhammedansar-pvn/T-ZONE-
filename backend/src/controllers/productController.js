@@ -1,24 +1,20 @@
-// controllers/productController.js
-// This controller handles fetching (with search, category, and pagination) and viewing details of products.
+
+
 
 const Product = require("../models/Product");
 const Review = require("../models/Review");
 const AppError = require("../utils/AppError");
 
-// 🔹 Get All Products (with optional pagination, search, and category filtering)
-// Path: GET /api/products
-const getProducts = async (req, res) => {
-  const { category, search, page, limit } = req.query;
 
-  // 1. Setup the default filter. We only want products that are not soft-deleted.
+const getProducts = async (req, res) => {
+  const { category, search } = req.query;
+
   const filter = { isDeleted: false };
 
-  // 2. If a specific category is requested, filter by it
   if (category) {
     filter.category = category;
   }
 
-  // 3. If a search query is provided, look for matches in name, description, brand, or category
   if (search) {
     filter.$or = [
       { name: { $regex: search, $options: "i" } },
@@ -28,120 +24,56 @@ const getProducts = async (req, res) => {
     ];
   }
 
-  // 4. Count the total number of products matching our filter (needed for pagination calculation)
   const totalProducts = await Product.countDocuments(filter);
 
   let products;
-  let paginationInfo = null;
+  let currentPage = 1;
+  let itemsPerPage = totalProducts || 8;
+  let totalPages = 1;
 
-  // 5. If pagination parameters (page or limit) are defined
-  if (page || limit) {
-    // Convert query strings to integers, setting default fallbacks
-    const currentPage = parseInt(page, 10) || 1;
-    const itemsPerPage = parseInt(limit, 10) || 10;
-    
-    // Calculate how many products to skip from the beginning
-    const skipAmount = (currentPage - 1) * itemsPerPage;
-
-    // Fetch only the subset of products matching our filters
+  if (req.query.page || req.query.limit) {
+    currentPage = Number(req.query.page) || 1;
+    itemsPerPage = Number(req.query.limit) || 8;
+    const skip = (currentPage - 1) * itemsPerPage;
     products = await Product.find(filter)
-      .skip(skipAmount)
+      .sort({ createdAt: -1 })
+      .skip(skip)
       .limit(itemsPerPage);
-
-    // Construct pagination details
-    paginationInfo = {
-      total: totalProducts,
-      page: currentPage,
-      limit: itemsPerPage,
-      pages: Math.ceil(totalProducts / itemsPerPage),
-    };
+    totalPages = Math.ceil(totalProducts / itemsPerPage);
   } else {
-    // If no pagination parameters, fetch all products matching the filters
-    products = await Product.find(filter);
+    products = await Product.find(filter).sort({ createdAt: -1 });
   }
 
-  // Fetch review statistics for the returned products
-  const productIds = products.map((p) => p._id);
-  
-  // We use MongoDB aggregation to find review stats for all returned products in a single database call.
-  // This prevents the N+1 query problem (making a separate DB request for each product's reviews).
-  const ratings = await Review.aggregate([
-    // Step 1: Filter reviews to only those matching our list of product IDs
-    { $match: { productId: { $in: productIds } } },
-    // Step 2: Group reviews by their productId and calculate the average rating and total count
-    {
-      $group: {
-        _id: "$productId", // Group by the productId field
-        averageRating: { $avg: "$rating" }, // Calculate average of the 'rating' field
-        reviewsCount: { $sum: 1 }, // Count total reviews in each group (adding 1 for each matching review)
-      },
-    },
-  ]);
-
-  // Convert the aggregation array result into a key-value map for fast lookup by productId
-  const ratingsMap = {};
-  ratings.forEach((r) => {
-    ratingsMap[r._id.toString()] = {
-      averageRating: Number(r.averageRating.toFixed(1)), // Keep 1 decimal place (e.g. 4.3)
-      reviewsCount: r.reviewsCount,
-    };
-  });
-
-  // Map the original products array to append their respective average rating and reviews count
-  const productsWithRatings = products.map((product) => {
-    const ratingData = ratingsMap[product._id.toString()] || {
-      averageRating: 0,
-      reviewsCount: 0,
-    };
-    return {
-      ...product.toObject(),
-      averageRating: ratingData.averageRating,
-      reviewsCount: ratingData.reviewsCount,
-    };
-  });
-
-  // 6. Build the API response object
-  const responseBody = {
+  res.json({
     success: true,
-    count: productsWithRatings.length,
-    products: productsWithRatings,
-  };
-
-  // Include pagination information if it was computed
-  if (paginationInfo) {
-    responseBody.pagination = paginationInfo;
-  }
-
-  return res.json(responseBody);
+    count: products.length,
+    totalProducts,
+    currentPage,
+    totalPages,
+    products,
+  });
 };
 
-// 🔹 Get Product By ID
-// Path: GET /api/products/:id
+
 const getProductById = async (req, res) => {
-  const productId = req.params.id;
-  
-  // Find the product by its MongoDB ID
-  const product = await Product.findById(productId);
+  const product = await Product.findById(req.params.id);
 
   if (!product) {
-    throw new AppError("Product not found", 404);
-  }
+  throw new AppError("Product not found", 404);
+}
 
-  // Get review statistics
-  const reviews = await Review.find({ productId });
-  let averageRating = 0;
-  if (reviews.length > 0) {
-    const sum = reviews.reduce((acc, r) => acc + r.rating, 0);
-    averageRating = Number((sum / reviews.length).toFixed(1));
-  }
+  const reviews = await Review.find({ productId: req.params.id });
 
-  const productObj = {
+  const total = reviews.reduce((sum, review) => sum + review.rating, 0);
+
+  const averageRating =
+    reviews.length > 0 ? (total / reviews.length).toFixed(1) : 0;
+
+  res.json({
     ...product.toObject(),
     averageRating,
     reviewsCount: reviews.length,
-  };
-
-  return res.json(productObj);
+  });
 };
 
 module.exports = {

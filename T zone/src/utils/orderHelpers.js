@@ -1,6 +1,6 @@
-// ==========================================
-// 🎨 STATUS BADGE STYLE
-// ==========================================
+
+
+
 export const getStatusStyle = (status) => {
   switch (status) {
     case "Delivered":
@@ -22,9 +22,9 @@ export const getStatusStyle = (status) => {
   }
 };
 
-// ==========================================
-// 📊 PROGRESS WIDTH
-// ==========================================
+
+
+
 export const getProgressWidth = (status) => {
   switch (status) {
     case "Placed":

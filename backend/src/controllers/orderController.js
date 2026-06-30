@@ -1,6 +1,6 @@
-// controllers/orderController.js
-// Handles Placing new orders, retrieving order history, viewing order details, and updating status/items.
-// Coordinates backend-driven stock validation, reduction on placement/payment, and cancellation restoration.
+
+
+
 
 const Order = require("../models/Order");
 const User = require("../models/User");
@@ -8,17 +8,17 @@ const Product = require("../models/Product");
 const mongoose = require("mongoose");
 const AppError = require("../utils/AppError");
 
-// 🔹 Create a New Order
-// Path: POST /api/orders
+
+
 const createOrder = async (req, res) => {
   const { products, paymentMethod, address, phone, customerName, userEmail } = req.body;
 
-  // 1. Validate fields
+  
   if (!products || !Array.isArray(products) || products.length === 0) {
     throw new AppError("Products list is required and cannot be empty", 400);
   }
 
-  // 2. Fetch products and calculate total price & items on the backend (prevents price tampering)
+  
   let totalPrice = 0;
   let totalItems = 0;
   const preparedProducts = [];
@@ -31,7 +31,7 @@ const createOrder = async (req, res) => {
       throw new AppError(`Product not found: ${item.name || item.productId}`, 404);
     }
 
-    // Check stock availability
+    
     if (product.stock < item.quantity) {
       throw new AppError(`Insufficient stock for ${product.name} (Available: ${product.stock})`, 400);
     }
@@ -50,12 +50,12 @@ const createOrder = async (req, res) => {
     });
   }
 
-  // 3. Generate a secure, unique order ID on the backend
+  
   const orderId = "ORD_" + Date.now() + "_" + Math.floor(1000 + Math.random() * 9000);
 
   const isOnline = paymentMethod === "ONLINE" || paymentMethod === "Online";
 
-  // 4. Handle stock updates immediately for Cash on Delivery (COD)
+  
   if (!isOnline) {
     for (let i = 0; i < preparedProducts.length; i++) {
       const item = preparedProducts[i];
@@ -65,7 +65,7 @@ const createOrder = async (req, res) => {
     }
   }
 
-  // 5. Create order in database
+  
   const order = await Order.create({
     userId: req.user ? req.user.id : null,
     userEmail: userEmail || (req.user ? req.user.email : "") || "",
@@ -90,13 +90,13 @@ const createOrder = async (req, res) => {
   });
 };
 
-// 🔹 Get All Orders
-// Path: GET /api/orders
+
+
 const getOrders = async (req, res) => {
   const { search, page, limit } = req.query;
   let filter = {};
 
-  // Standard non-admin user can only see their own orders
+  
   if (req.user.role !== "admin") {
     filter.$or = [
       { userId: req.user.id },
@@ -158,8 +158,8 @@ const getOrders = async (req, res) => {
   });
 };
 
-// 🔹 Get a Single Order by ID
-// Path: GET /api/orders/:id
+
+
 const getOrderById = async (req, res) => {
   const id = req.params.id;
   const isMongoId = mongoose.Types.ObjectId.isValid(id);
@@ -177,7 +177,7 @@ const getOrderById = async (req, res) => {
     throw new AppError("Order not found", 404);
   }
 
-  // Access authorization check
+  
   if (req.user.role !== "admin") {
     const isOwnerById = String(order.userId?._id || order.userId) === String(req.user.id);
     const isOwnerByEmail = order.userEmail === req.user.email;
@@ -194,8 +194,8 @@ const getOrderById = async (req, res) => {
   });
 };
 
-// 🔹 Update Order Details (status, stock management)
-// Path: PATCH /api/orders/:id or PUT /api/orders/:id
+
+
 const updateOrder = async (req, res) => {
   const id = req.params.id;
   const isMongoId = mongoose.Types.ObjectId.isValid(id);
@@ -210,7 +210,7 @@ const updateOrder = async (req, res) => {
     throw new AppError("Order not found", 404);
   }
 
-  // Security check
+  
   if (req.user.role !== "admin") {
     const isOwnerById = String(order.userId) === String(req.user.id);
     const isOwnerByEmail = order.userEmail === req.user.email;
@@ -218,9 +218,70 @@ const updateOrder = async (req, res) => {
     if (!isOwnerById && !isOwnerByEmail) {
       throw new AppError("Access Denied: You cannot modify this order", 403);
     }
+
+    // Prevent non-admins from modifying restricted fields
+    const restrictedFields = [
+      "stockUpdated",
+      "paymentStatus",
+      "paymentMethod",
+      "paymentId",
+      "placedAt",
+      "paidAt",
+    ];
+    for (let i = 0; i < restrictedFields.length; i++) {
+      const field = restrictedFields[i];
+      if (req.body[field] !== undefined) {
+        throw new AppError(`Access Denied: You cannot modify the '${field}' field`, 403);
+      }
+    }
+
+    // Only allow specific status transitions for non-admins
+    if (req.body.status !== undefined) {
+      const allowedStatuses = ["Cancelled", "Return Requested"];
+      if (!allowedStatuses.includes(req.body.status)) {
+        throw new AppError(`Access Denied: You cannot change status to '${req.body.status}'`, 403);
+      }
+    }
+
+    // Validate products array if provided by a non-admin to prevent price/quantity spoofing
+    if (req.body.products !== undefined) {
+      if (!Array.isArray(req.body.products)) {
+        throw new AppError("Products must be an array", 400);
+      }
+
+      let recalculatedTotalPrice = 0;
+      let recalculatedTotalItems = 0;
+
+      for (let i = 0; i < req.body.products.length; i++) {
+        const item = req.body.products[i];
+        const originalItem = order.products.find(
+          (p) => String(p.productId) === String(item.productId)
+        );
+
+        if (!originalItem) {
+          throw new AppError("Access Denied: You cannot add new products to an existing order", 403);
+        }
+
+        if (item.quantity > originalItem.quantity) {
+          throw new AppError("Access Denied: You cannot increase the quantity of ordered products", 403);
+        }
+
+        if (item.price !== undefined && Number(item.price) !== Number(originalItem.price)) {
+          throw new AppError("Access Denied: You cannot modify product prices in an order", 403);
+        }
+
+        recalculatedTotalPrice += Number(originalItem.price) * Number(item.quantity);
+        recalculatedTotalItems += Number(item.quantity);
+      }
+
+      // Override request data with validated, recalculated values
+      req.body.totalPrice = recalculatedTotalPrice;
+      req.body.totalAmount = recalculatedTotalPrice;
+      req.body.totalItems = recalculatedTotalItems;
+    }
   }
 
-  // Restore stock if the order status is changing to "Cancelled" and stock was actually deducted
+  
   const isChangingToCancelled = req.body.status === "Cancelled";
   const isCurrentlyCancelled = order.status === "Cancelled";
 
@@ -234,7 +295,7 @@ const updateOrder = async (req, res) => {
     order.stockUpdated = false;
   }
 
-  // Restore stock differences if quantities are updated and stock was actually deducted
+  
   if (req.body.products && order.stockUpdated) {
     const newProductsList = req.body.products;
 
@@ -260,7 +321,7 @@ const updateOrder = async (req, res) => {
     }
   }
 
-  // Update fields
+  
   const fieldsToUpdate = [
     "status",
     "products",

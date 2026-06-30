@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
 
-// Customer Pages
+
 import Home from "./Pages/Home";
 import Watches from "./Pages/Watches";
 import Cart from "./Pages/Cart";
@@ -15,12 +15,13 @@ import OrderSuccess from "./Pages/OrderSuccess";
 import Orders from "./Pages/Orders";
 import Profile from "./Pages/Profile";
 import Wishlist from "./Pages/Wishlist";
+import VerifyEmail from "./Pages/VerifyEmail";
 
-// Protected Route
+
 import ProtectedRoute from "./Components/ProtectedRoute";
 import { Toaster } from "react-hot-toast";
 
-// Admin Layout & Pages
+
 import AdminLayout from "./admin/layout/AdminLayout";
 import Dashboard from "./admin/pages/Dashboard";
 import ProductsList from "./admin/pages/products/ProductsList";
@@ -30,10 +31,10 @@ import OrdersManagement from "./admin/pages/orders/OrdersManagement";
 import Users from "./admin/pages/users/Users";
 import UserDetails from "./admin/pages/users/UserDetails";
 
-// Layouts
+
 import UserLayout from "./admin/layout/UserLayout";
 
-// Context Hook
+
 import { useAuth } from "./Context/AuthContext";
 
 const AppRoutes = () => {
@@ -41,7 +42,7 @@ const AppRoutes = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Redirect admin to admin dashboard
+  
   useEffect(() => {
     if (!authLoading && user?.role === "admin" && location.pathname === "/") {
       navigate("/admin", { replace: true });
@@ -64,6 +65,7 @@ const AppRoutes = () => {
           <Route path="signup" element={<Signup />} />
           <Route path="forgot-password" element={<ForgotPassword />} />
           <Route path="reset-password/:token" element={<ResetPassword />} />
+          <Route path="verify-email/:token" element={<VerifyEmail />} />
           <Route path="product/:id" element={<ProductView />} />
 
           {/* PROTECTED */}

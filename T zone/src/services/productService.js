@@ -2,10 +2,13 @@ import API from "../config/api";
 
 /* ================= GET ALL PRODUCTS ================= */
 
-export const getProducts = async () => {
+export const getProducts = async (page, limit) => {
   try {
-    const res = await API.get("/products");
-    return res.data.products; // 
+    const url = (page !== undefined && limit !== undefined)
+      ? `/products?page=${page}&limit=${limit}`
+      : "/products";
+    const res = await API.get(url);
+    return res.data;
   } catch (error) {
     console.error("Fetch Products Error:", error.message);
     throw error;
@@ -31,7 +34,7 @@ export const addProduct = async (product) => {
       name: (product.name || "").trim(),
       price: Number(product.price),
       category: product.category,
-      images: (product.images || []).slice(0, 4), // limit images
+      images: (product.images || []).slice(0, 4), 
       description: product.description?.trim() || "",
       stock: Number(product.stock),
     };
@@ -42,7 +45,7 @@ export const addProduct = async (product) => {
       throw new Error("Images too large. Please upload smaller images.");
     }
 
-    const res = await API.post("/products", newProduct);
+    const res = await API.post("/admin/products", newProduct);
     return res.data;
   } catch (error) {
     console.error("Add Product Error:", error.message);
@@ -63,7 +66,7 @@ export const updateProduct = async (id, product) => {
       stock: Number(product.stock),
     };
 
-    const res = await API.put(`/products/${id}`, updatedProduct);
+    const res = await API.put(`/admin/products/${id}`, updatedProduct);
     return res.data;
   } catch (error) {
     console.error("Update Product Error:", error.message);
@@ -75,7 +78,7 @@ export const updateProduct = async (id, product) => {
 
 export const deleteProduct = async (id) => {
   try {
-    await API.delete(`/products/${id}`);
+    await API.delete(`/admin/products/${id}`);
   } catch (error) {
     console.error("Delete Product Error:", error.message);
     throw error;

@@ -28,7 +28,7 @@ const Signup = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // OTP countdown
+  
   useEffect(() => {
     if (!showOtpBox || timer === 0) return;
 
@@ -39,7 +39,7 @@ const Signup = () => {
     return () => clearInterval(interval);
   }, [timer, showOtpBox]);
 
-  // input change
+  
   const handleChange = (e) => {
     const { name, value } = e.target;
 
@@ -50,7 +50,7 @@ const Signup = () => {
     }
   };
 
-  // validation
+  
   const validateForm = () => {
     const { name, email, mobile, address, password, confirmPassword } = form;
 
@@ -97,7 +97,7 @@ const Signup = () => {
     }
   };
 
-  // submit
+  
 const handleSubmit = async (e) => {
   e.preventDefault();
   setError("");
@@ -122,7 +122,7 @@ const handleSubmit = async (e) => {
 
     alert(data.message || "Registration Successful! Please check your email to verify your account.");
 
-    // Redirect to login page
+    
     navigate("/login");
   } catch (error) {
     setError(error.message || "Registration failed");
@@ -131,70 +131,69 @@ const handleSubmit = async (e) => {
   }
 };
 
-  // OTP change
-  // const handleOtpChange = (value, index) => {
-  //   if (!/^\d?$/.test(value)) return;
+  
+  
+  
 
-  //   const newOtp = [...otpInputs];
-  //   newOtp[index] = value;
-  //   setOtpInputs(newOtp);
+  
+  
+  
 
-  //   if (value && index < 5) {
-  //     document.getElementById(`otp-${index + 1}`)?.focus();
-  //   }
-  // };
+  
+  
+  
+  
 
-  // verify OTP
-//  const verifyOtp = async () => {
-//   const enteredOtp = otpInputs.join("");
+  
 
-//   if (enteredOtp !== generatedOtp) {
-//     setError("Invalid OTP");
-//     return;
-//   }
 
-//   try {
-//     setLoading(true);
 
-//    await registerUser({
-//   name: form.name.trim(),
-//   email: form.email.trim(),
-//   password: form.password,
-//   mobile: form.mobile,
-//   address: form.address.trim(),
-// });
 
-//     navigate("/login");
-//   } catch (error) {
-//     setError(error.message);
-//   } finally {
-//     setLoading(false);
-//   }
-// };
 
-  // const resendOtp = async () => {
-  //   const otp = generateOTP();
-  //   const sent = await sendOtpEmail(form.email, otp);
 
-  //   if (!sent) return setError("Failed to resend OTP");
 
-  //   setGeneratedOtp(otp);
-  //   setTimer(60);
-  //   setOtpInputs(["", "", "", "", "", ""]);
-  // };
 
-  // Google signup
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  
+
+  
+
+  
+  
+  
+  
+
+  
   const handleGoogleSignup = async () => {
     setError("");
     setLoading(true);
     try {
       const result = await signInWithPopup(auth, googleProvider);
       const firebaseUser = result.user;
+      const idToken = await firebaseUser.getIdToken();
 
       const res = await API.post("/auth/google-login", {
-        email: firebaseUser.email,
-        name: firebaseUser.displayName || firebaseUser.email.split("@")[0],
-        googleId: firebaseUser.uid,
+        idToken,
       });
 
       const { token, user: backendUser } = res.data;

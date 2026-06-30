@@ -21,7 +21,7 @@ router.post("/google-login", googleLogin);
 router.post("/refresh", refreshSession);
 router.get("/profile", protect, getProfile);
 
-// Email verification and password reset routes
+
 router.get("/verify-email/:token", verifyEmail);
 router.post("/forgot-password", forgotPassword);
 router.post("/reset-password/:token", resetPassword);

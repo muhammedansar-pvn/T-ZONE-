@@ -22,7 +22,7 @@ export const useOrders = (user) => {
 
       const allOrders = await getOrders();
 
-      // ✅ Filter + sort once
+      
       const userOrders = allOrders
         .filter((order) => order.userEmail === user.email)
         .sort(
@@ -46,7 +46,7 @@ export const useOrders = (user) => {
 
   const cancelFullOrder = useCallback(async (orderId) => {
     try {
-      // ⚡ Optimistic UI update
+      
       setOrders((prev) =>
         prev.map((order) =>
           order.id === orderId
@@ -58,7 +58,7 @@ export const useOrders = (user) => {
       await cancelOrder(orderId);
     } catch {
       setError("Failed to cancel order.");
-      fetchOrders(); // fallback
+      fetchOrders(); 
     }
   }, [fetchOrders]);
 
@@ -66,7 +66,7 @@ export const useOrders = (user) => {
 
   const returnOrder = useCallback(async (orderId) => {
     try {
-      // ⚡ Optimistic update
+      
       setOrders((prev) =>
         prev.map((order) =>
           order.id === orderId
@@ -86,7 +86,7 @@ export const useOrders = (user) => {
 
   const cancelItem = useCallback(async (orderId, productId) => {
     try {
-      // ⚡ Optimistic update
+      
       setOrders((prev) =>
         prev.map((order) => {
           if (order.id !== orderId) return order;

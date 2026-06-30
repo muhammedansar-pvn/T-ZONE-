@@ -54,4 +54,7 @@ const productSchema = new mongoose.Schema(
   }
 );
 
+productSchema.index({ category: 1, isDeleted: 1 });
+productSchema.index({ isDeleted: 1 });
+
 module.exports = mongoose.model("Product", productSchema);

@@ -4,7 +4,7 @@ const cookieParser = require("cookie-parser");
 const dotenv = require("dotenv");
 const path = require("path");
 
-// Load environment variables immediately at startup
+
 dotenv.config({ path: path.join(__dirname, "../.env") });
 
 const connectDB = require("./config/db");
@@ -16,9 +16,24 @@ const orderRoutes = require("./routes/orderRoutes");
 const userRoutes = require("./routes/userRoutes");
 const paymentRoutes = require("./routes/paymentRoutes");
 const adminRoutes = require("./routes/adminRoutes");
+const helmet = require("helmet");
+const rateLimit = require("express-rate-limit");
 
 connectDB();
 const app = express();
+
+app.use(helmet({
+  crossOriginOpenerPolicy: false
+}));
+
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: process.env.NODE_ENV === "production" ? 100 : 10000, // limit each IP to 100 requests in production, 10000 in development
+  message: { success: false, message: "Too many requests from this IP, please try again after 15 minutes" },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+app.use("/api", limiter);
 
 const allowedOrigins = process.env.ALLOWED_ORIGINS.split(",");
 
@@ -44,13 +59,20 @@ app.use("/api/cart", cartRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/admin", adminRoutes);
 
-// Register user routes on both /users and /api/users for frontend compatibility
-app.use("/users", userRoutes);
+
 app.use("/api/users", userRoutes);
 
-// Register payment routes on /payments and /api/payments
+
 app.use("/payments", paymentRoutes);
 app.use("/api/payments", paymentRoutes);
+
+const { ensureUploadsExists } = require("./utils/fileSystem");
+const uploadRoutes = require("./routes/uploadRoutes");
+
+ensureUploadsExists();
+
+app.use("/uploads", express.static("uploads"));
+app.use("/api/upload", uploadRoutes);
 
 app.get("/",(req,res)=>{
     res.json({
@@ -59,13 +81,13 @@ app.get("/",(req,res)=>{
     })
 })
 
-// Catch all unhandled routes and forward a 404 AppError
+
 const AppError = require("./utils/AppError");
 app.use((req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
 });
 
-// Centralized error handling middleware
+
 const errorHandler = require("./middleware/errorMiddleware");
 app.use(errorHandler);
 

@@ -1,11 +1,13 @@
 import bgvideo from "../assets/Images/background.mp4";
 import { useNavigate } from "react-router-dom";
-// eslint-disable-next-line no-unused-vars
+
 import { motion } from "framer-motion";
 import { useEffect, useState, useRef } from "react";
 import { getProducts } from "../services/productService";
 import { useSearch } from "../Context/SearchContext";
 import { useAuth } from "../Context/AuthContext";
+
+const PLACEHOLDER_IMAGE = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2MDAiIGhlaWdodD0iNjAwIiB2aWV3Qm94PSIwIDAgNjAwIDYwMCI+PHJlY3Qgd2lkdGg9IjYwMCIgaGVpZ2h0PSI2MDAiIGZpbGw9IiNGM0Y0RjYiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjAiIGZpbGw9IiM5Q0EzQUYiPk5vIEltYWdlIEF2YWlsYWJsZTwvdGV4dD48L3N2Zz4=";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -26,11 +28,14 @@ const Home = () => {
     const fetchProducts = async () => {
       try {
         const data = await getProducts();
-        setAllProducts(data);
-        setFeatured(data.slice(0, 3));
+        const productsList = data && Array.isArray(data.products) ? data.products : [];
+        setAllProducts(productsList);
+        setFeatured(productsList.slice(0, 3));
       } catch (err) {
         console.error("Product Fetch Error:", err);
         setError("Failed to load products.");
+        setAllProducts([]);
+        setFeatured([]);
       } finally {
         setLoading(false);
       }
@@ -57,9 +62,11 @@ const Home = () => {
   /* ===============================
      FILTER PRODUCTS
   ================================ */
-  const filteredProducts = allProducts.filter((product) =>
-  product.name?.toLowerCase().includes(searchTerm.toLowerCase())
-);
+  const filteredProducts = Array.isArray(allProducts)
+    ? allProducts.filter((product) =>
+        product?.name?.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    : [];
 
   const productsToShow = searchTerm ? filteredProducts : featured;
 
@@ -185,7 +192,7 @@ const Home = () => {
                   className="cursor-pointer bg-white/5 backdrop-blur-lg rounded-2xl overflow-hidden border border-yellow-500/20 hover:scale-105 transition duration-500 shadow-lg"
                 >
                   <img
-                    src={product.images?.[0] || "https://via.placeholder.com/300"}
+                    src={product.images?.[0] || PLACEHOLDER_IMAGE}
                     alt={product.name}
                     className="w-full h-80 object-cover"
                   />

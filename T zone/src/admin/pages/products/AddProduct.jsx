@@ -55,20 +55,19 @@ const AddProduct = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  /* ================= CLOUDINARY UPLOAD ================= */
+  /* ================= BACKEND IMAGE UPLOAD ================= */
 
-  const uploadImageToCloudinary = async (file) => {
+  const uploadImageToServer = async (file) => {
     const data = new FormData();
-
     data.append("file", file);
-    data.append("upload_preset", "T-zone");
 
-    const res = await axios.post(
-      "https://api.cloudinary.com/v1_1/dit40na4i/image/upload",
-      data
-    );
+    const res = await API.post("/upload", data, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
 
-    return res.data.secure_url;
+    return res.data.url;
   };
 
   /* ================= FILE IMAGE UPLOAD ================= */
@@ -101,7 +100,7 @@ const AddProduct = () => {
 
       const uploadedImages = await Promise.all(
         files.map(async (file) => {
-          const url = await uploadImageToCloudinary(file);
+          const url = await uploadImageToServer(file);
           return url;
         })
       );

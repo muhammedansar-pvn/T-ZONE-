@@ -7,7 +7,7 @@ import { logoutUser } from "../services/authService";
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  // 🔹 Lazy state initialization to avoid synchronous state update in useEffect
+  
   const [user, setUser] = useState(() => {
     const storedUser = localStorage.getItem("authUser");
     if (storedUser) {
@@ -23,7 +23,7 @@ export const AuthProvider = ({ children }) => {
   const authLoading = false;
   const blockedToastShown = useRef(false);
 
-  // 🔹 Login
+  
   const login = (userData) => {
     if (userData?.isBlocked) {
       toast.error("Your account has been temporarily blocked");
@@ -42,14 +42,14 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // 🔹 Logout
+  
   const logout = async () => {
     setUser(null);
     await logoutUser();
     window.location.replace("/login");
   };
 
-  // 🔹 Update Profile
+  
   const updateProfile = async (updatedData) => {
     if (!user?.id) return;
     try {
@@ -71,7 +71,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // 🔹 Check user status (Polling every 30 seconds)
+  
   useEffect(() => {
     if (!user?.id) return;
 
@@ -80,13 +80,13 @@ export const AuthProvider = ({ children }) => {
         const res = await API.get(`/users/${user.id}`);
         const latestUser = res.data;
 
-        // User deleted
+        
         if (!latestUser) {
           logout();
           return;
         }
 
-        // User blocked
+        
         if (latestUser.isBlocked) {
           if (!blockedToastShown.current) {
             blockedToastShown.current = true;
@@ -96,7 +96,7 @@ export const AuthProvider = ({ children }) => {
           return;
         }
 
-        // Update latest user
+        
         const updatedUser = {
           ...latestUser,
           id: latestUser._id || latestUser.id || user.id,
@@ -112,7 +112,7 @@ export const AuthProvider = ({ children }) => {
       }
     };
 
-    const interval = setInterval(checkUserStatus, 30000); // 30 seconds polling
+    const interval = setInterval(checkUserStatus, 30000); 
     return () => clearInterval(interval);
   }, [user?.id]);
 

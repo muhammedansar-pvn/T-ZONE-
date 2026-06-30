@@ -24,3 +24,7 @@ yarn-debug.log*
 # System Files
 .DS_Store
 Thumbs.db
+
+# User Uploads and Temporary Test Files
+backend/uploads/
+backend/test-file.png

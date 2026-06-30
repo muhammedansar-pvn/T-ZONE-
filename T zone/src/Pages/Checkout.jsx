@@ -122,7 +122,7 @@ const Checkout = () => {
     try {
       setLoading(true);
 
-      // 1. Check if user is blocked before processing
+      
       const userId = user.id || user._id;
       const userRes = await API.get(`/users/${userId}`);
       if (userRes.data.isBlocked) {
@@ -131,14 +131,14 @@ const Checkout = () => {
         return;
       }
 
-      // 2. Prepare checkout products format
+      
       const preparedProducts = cart.map((item) => ({
         productId: item._id,
         quantity: Number(item.quantity),
         name: item.name,
       }));
 
-      // 3. Create the Order on the backend first
+      
       const orderRes = await API.post("/orders", {
         products: preparedProducts,
         paymentMethod: paymentMethod === "ONLINE" ? "Online" : "Cash on Delivery",
@@ -168,7 +168,7 @@ const Checkout = () => {
 
       /* B. ONLINE PAYMENT FLOW */
       if (paymentMethod === "ONLINE") {
-        // Create Razorpay Order on the backend
+        
         const payOrderRes = await API.post("/payments/create-order", {
           orderId: dbOrderId,
         });
@@ -180,7 +180,7 @@ const Checkout = () => {
           return;
         }
 
-        // Open Razorpay Popup
+        
         const paymentResult = await startRazorpayPayment(
           payData.keyId,
           payData.razorpayOrder,

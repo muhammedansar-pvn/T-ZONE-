@@ -1,4 +1,4 @@
-// src/admin/pages/products/ProductList.jsx
+
 
 import { useEffect, useState, useMemo } from "react";
 import { getProducts, deleteProduct } from "../../../services/productService";
@@ -12,24 +12,26 @@ const ProductList = () => {
 
   const [search, setSearch] = useState("");
   const [stockFilter, setStockFilter] = useState("All");
+  const [categoryFilter, setCategoryFilter] = useState("All");
   const [sortOption, setSortOption] = useState("newest");
 
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedProducts, setSelectedProducts] = useState([]);
   const [previewImage, setPreviewImage] = useState(null);
 
-  // ================= IMAGE HELPER =================
+  
   const getProductImage = (item) =>
     item.images?.[0] ||
     "https://via.placeholder.com/100";
 
-  // ================= FETCH =================
+  
   const fetchProducts = async () => {
     try {
       const data = await getProducts();
-      setProducts(data);
+      setProducts(data && Array.isArray(data.products) ? data.products : []);
     } catch (error) {
       console.error("Fetch Error:", error);
+      setProducts([]);
     } finally {
       setLoading(false);
     }
@@ -41,9 +43,9 @@ const ProductList = () => {
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [search, stockFilter, sortOption]);
+  }, [search, stockFilter, categoryFilter, sortOption]);
 
-  // ================= DELETE =================
+  
   const handleDelete = async (id) => {
     if (!window.confirm("Delete this product?")) return;
 
@@ -55,7 +57,7 @@ const ProductList = () => {
     }
   };
 
-  // ================= BULK DELETE =================
+  
   const handleBulkDelete = async () => {
     if (!window.confirm("Delete selected products?")) return;
 
@@ -71,9 +73,11 @@ const ProductList = () => {
     }
   };
 
-  // ================= FILTER + SORT =================
+  
   const processedProducts = useMemo(() => {
+    if (!Array.isArray(products)) return [];
     let filtered = products.filter((item) => {
+      if (!item) return false;
       const matchesSearch = item.name
         ?.toLowerCase()
         .includes(search.toLowerCase());
@@ -83,7 +87,11 @@ const ProductList = () => {
         (stockFilter === "In Stock" && item.stock > 0) ||
         (stockFilter === "Out of Stock" && item.stock === 0);
 
-      return matchesSearch && matchesStock;
+      const matchesCategory =
+        categoryFilter === "All" ||
+        item.category?.toLowerCase() === categoryFilter.toLowerCase();
+
+      return matchesSearch && matchesStock && matchesCategory;
     });
 
     switch (sortOption) {
@@ -104,10 +112,16 @@ const ProductList = () => {
     }
 
     return filtered;
-  }, [products, search, stockFilter, sortOption]);
+  }, [products, search, stockFilter, categoryFilter, sortOption]);
 
-  // ================= PAGINATION =================
+  
   const totalPages = Math.ceil(processedProducts.length / ITEMS_PER_PAGE);
+
+  useEffect(() => {
+    if (currentPage > totalPages && totalPages > 0) {
+      setCurrentPage(totalPages);
+    }
+  }, [totalPages, currentPage]);
 
   const paginatedProducts = processedProducts.slice(
     (currentPage - 1) * ITEMS_PER_PAGE,
@@ -150,6 +164,17 @@ const ProductList = () => {
         />
 
         <select
+          value={categoryFilter}
+          onChange={(e) => setCategoryFilter(e.target.value)}
+          className="border px-4 py-2 rounded-lg outline-none focus:border-yellow-500 transition bg-white"
+        >
+          <option value="All">All Categories</option>
+          <option value="sports">Sports</option>
+          <option value="luxury">Luxury</option>
+          <option value="casual">Casual</option>
+        </select>
+
+        <select
           value={stockFilter}
           onChange={(e) => setStockFilter(e.target.value)}
           className="border px-4 py-2 rounded-lg outline-none focus:border-yellow-500 transition bg-white"
@@ -183,6 +208,7 @@ const ProductList = () => {
                 <th></th>
                 <th>Image</th>
                 <th>Name</th>
+                <th>Category</th>
                 <th>Price</th>
                 <th>Stock</th>
                 <th>Actions</th>
@@ -193,7 +219,7 @@ const ProductList = () => {
               {paginatedProducts.length === 0 ? (
                 <tr>
                   <td
-                    colSpan="6"
+                    colSpan="7"
                     className="py-8 text-center text-gray-500 font-semibold"
                   >
                     No products found
@@ -238,6 +264,7 @@ const ProductList = () => {
                     </td>
 
                     <td>{item.name}</td>
+                    <td className="capitalize">{item.category || "—"}</td>
                     <td>₹{item.price}</td>
 
                     <td

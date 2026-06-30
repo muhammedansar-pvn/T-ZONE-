@@ -1,6 +1,8 @@
 import { useWishlist } from "../Context/WishlistContext";
 import { useNavigate } from "react-router-dom";
 
+const PLACEHOLDER_IMAGE = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2MDAiIGhlaWdodD0iNjAwIiB2aWV3Qm94PSIwIDAgNjAwIDYwMCI+PHJlY3Qgd2lkdGg9IjYwMCIgaGVpZ2h0PSI2MDAiIGZpbGw9IiNGM0Y0RjYiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjAiIGZpbGw9IiM5Q0EzQUYiPk5vIEltYWdlIEF2YWlsYWJsZTwvdGV4dD48L3N2Zz4=";
+
 const Wishlist = () => {
   const { wishlist, removeFromWishlist } = useWishlist();
   const navigate = useNavigate();
@@ -30,11 +32,12 @@ const Wishlist = () => {
               >
                 <div className="overflow-hidden rounded-xl bg-gray-100 dark:bg-gray-800">
                   <img
-                    src={item.images?.[0] || "https://via.placeholder.com/300"}
+                    src={item.images?.[0] || PLACEHOLDER_IMAGE}
                     alt={item.name}
                     className="w-full h-48 object-cover group-hover:scale-105 transition duration-300"
                     onError={(e) => {
-                      e.target.src = "https://via.placeholder.com/300";
+                      e.target.onerror = null;
+                      e.target.src = PLACEHOLDER_IMAGE;
                     }}
                   />
                 </div>

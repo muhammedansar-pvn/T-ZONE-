@@ -1,4 +1,4 @@
-// services/orderService.js
+
 
 import API from "../config/api";
 
@@ -25,7 +25,7 @@ export const getOrders = async () => {
 ================================ */
 export const saveOrder = async (orderData) => {
   try {
-    // 🔥 Save Order - Backend automatically validates stock and reduces it
+    
     const res = await API.post("/orders", {
       ...orderData,
       status: "Placed",
@@ -52,7 +52,7 @@ export const cancelOrder = async (orderId) => {
       throw new Error("Delivered order cannot be cancelled");
     }
 
-    // 🔥 Update Order Status - Backend automatically restores stock when cancelled
+    
     const { data } = await API.patch(`/orders/${String(orderId)}`, {
       status: "Cancelled",
     });
@@ -83,7 +83,7 @@ export const cancelSingleItem = async (orderId, productId) => {
 
     if (!item) throw new Error("Product not found in order");
 
-    // 🔥 Reduce quantity in order - Backend will automatically compare old and new products list and restore stock for the difference
+    
     const updatedProducts = order.products
       .map((p) =>
         String(p.productId) === String(productId)

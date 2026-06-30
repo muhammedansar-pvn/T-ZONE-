@@ -10,7 +10,7 @@ const {
   clearCart,
 } = require("../controllers/cartController");
 
-// Protect all cart routes
+
 router.use(protect);
 
 router.post("/", addToCart);

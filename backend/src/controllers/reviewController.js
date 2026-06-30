@@ -3,7 +3,7 @@ const User = require("../models/User");
 const AppError = require("../utils/AppError");
 
 
-// Path: POST /api/products/:id/reviews
+
 const addProductReview = async (req, res) => {
   const { rating, comment } = req.body;
   const productId = req.params.id;
@@ -19,16 +19,16 @@ const addProductReview = async (req, res) => {
   }
   const name = dbUser.name || dbUser.username || "Anonymous";
 
-  // 1. Check if the user already reviewed this product
+  
   let review = await Review.findOne({ productId, userId });
 
   if (review) {
-    // Update existing review
+    
     review.rating = Number(rating);
     review.comment = comment;
     await review.save();
   } else {
-    // Create new review
+    
     review = await Review.create({
       productId,
       userId,
@@ -45,13 +45,13 @@ const addProductReview = async (req, res) => {
   });
 };
 
-// 🔹 Get All Reviews for a Product (calculates average rating)
-// Path: GET /api/products/:id/reviews
+
+
 const getProductReviews = async (req, res) => {
   const productId = req.params.id;
   const reviews = await Review.find({ productId }).sort({ createdAt: -1 });
 
-  // Calculate average rating
+  
   let averageRating = 0;
   if (reviews.length > 0) {
     const sum = reviews.reduce((acc, r) => acc + r.rating, 0);

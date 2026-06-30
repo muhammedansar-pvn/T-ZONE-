@@ -9,7 +9,7 @@ const {
   updateOrder,
 } = require("../controllers/orderController");
 
-// All order routes require authentication
+
 router.use(protect);
 
 router.post("/", createOrder);

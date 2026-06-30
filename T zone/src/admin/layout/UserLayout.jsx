@@ -1,4 +1,4 @@
-// src/admin/layout/AdminLayout.jsx
+
 import Navbar from "../../Components/Navbar";
 import Sidebar from "./Sidebar";
 import Topbar from "./Topbar";

@@ -1,15 +1,15 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState, useContext } from "react";
-import axios from "axios";
 import { CartContext } from "../Context/CartContext";
 import { FaHeart } from "react-icons/fa";
-import { BASE_URL } from "../config/api";
+import { getProductById } from "../services/productService";
 
-const API_BASE = `${BASE_URL}/products`;
 const MAX_QUANTITY = 5;
 
+const PLACEHOLDER_IMAGE = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2MDAiIGhlaWdodD0iNjAwIiB2aWV3Qm94PSIwIDAgNjAwIDYwMCI+PHJlY3Qgd2lkdGg9IjYwMCIgaGVpZ2h0PSI2MDAiIGZpbGw9IiNGM0Y0RjYiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjAiIGZpbGw9IiM5Q0EzQUYiPk5vIEltYWdlIEF2YWlsYWJsZTwvdGV4dD48L3N2Zz4=";
+
 const ProductDetails = () => {
-  const { id } = useParams(); // keep as string
+  const { id } = useParams(); 
   const navigate = useNavigate();
   const { cart, addToCart } = useContext(CartContext);
 
@@ -25,16 +25,15 @@ const ProductDetails = () => {
 
   const isInCart = !!existingItem;
 
-  // ================= FETCH PRODUCT =================
+  
   useEffect(() => {
     window.scrollTo(0, 0);
 
     const fetchProduct = async () => {
       try {
-        const res = await axios.get(`${API_BASE}/${id}`);
-        const data = res.data;
+        const data = await getProductById(id);
 
-        // Normalize image system
+        
         const normalizedImages = data.images || [];
 
         const normalizedProduct = {
@@ -44,11 +43,10 @@ const ProductDetails = () => {
 
         setProduct(normalizedProduct);
         setSelectedImage(
-          normalizedImages[0] ||
-            "https://via.placeholder.com/600"
+          normalizedImages[0] || PLACEHOLDER_IMAGE
         );
 
-        // Wishlist check
+        
         const wishlistItems =
           JSON.parse(localStorage.getItem("wishlist")) || [];
 
@@ -64,7 +62,7 @@ const ProductDetails = () => {
     fetchProduct();
   }, [id]);
 
-  // ================= WISHLIST =================
+  
   const handleWishlist = () => {
     const wishlistItems =
       JSON.parse(localStorage.getItem("wishlist")) || [];
@@ -84,7 +82,7 @@ const ProductDetails = () => {
     }
   };
 
-  // ================= ADD TO CART =================
+  
   const handleAddToCart = () => {
     if (existingItem) {
       const newQty = existingItem.quantity + quantity;
@@ -98,7 +96,7 @@ const ProductDetails = () => {
     addToCart({ ...product, quantity });
   };
 
-  // ================= LOADING =================
+  
   if (loading) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center">
@@ -109,7 +107,7 @@ const ProductDetails = () => {
     );
   }
 
-  // ================= NOT FOUND =================
+  
   if (!product) {
     return (
       <div className="min-h-screen bg-black text-white flex flex-col justify-center items-center">
@@ -138,10 +136,11 @@ const ProductDetails = () => {
             src={selectedImage}
             alt={product.name}
             className="w-full h-[500px] object-contain rounded-3xl shadow-xl"
-            onError={(e) =>
-              (e.target.src =
-                "https://via.placeholder.com/600")
-            }
+            onError={(e) => {
+              if (selectedImage !== PLACEHOLDER_IMAGE) {
+                setSelectedImage(PLACEHOLDER_IMAGE);
+              }
+            }}
           />
 
           {/* Thumbnails */}

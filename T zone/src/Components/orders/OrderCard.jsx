@@ -23,19 +23,19 @@ const OrderCard = ({
   const overallStatus = order?.status || "Placed";
   const paymentStatus = order?.paymentStatus || "Pending";
 
-  // ---------- PROFESSIONAL LOGIC ----------
+  
 
-  // Cancel only before shipping
+  
   const canCancel =
     overallStatus === "Placed" ||
     overallStatus === "Processing";
 
-  // Return only after delivery
+  
   const canReturn =
     overallStatus === "Delivered" &&
     paymentStatus === "Paid";
 
-  // Payment only if unpaid
+  
   const canPay =
     paymentStatus !== "Paid" &&
     overallStatus === "Placed";

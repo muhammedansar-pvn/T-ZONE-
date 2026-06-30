@@ -3,6 +3,8 @@ import { useCart } from "../Context/CartContext";
 
 const MAX_QUANTITY = 5;
 
+const PLACEHOLDER_IMAGE = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2MDAiIGhlaWdodD0iNjAwIiB2aWV3Qm94PSIwIDAgNjAwIDYwMCI+PHJlY3Qgd2lkdGg9IjYwMCIgaGVpZ2h0PSI2MDAiIGZpbGw9IiNGM0Y0RjYiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMjAiIGZpbGw9IiM5Q0EzQUYiPk5vIEltYWdlIEF2YWlsYWJsZTwvdGV4dD48L3N2Zz4=";
+
 const Cart = () => {
   const { cart, removeFromCart, updateQuantity, totalPrice } =
     useCart();
@@ -38,13 +40,14 @@ const Cart = () => {
                   src={
                     item.images?.[0] ||
                     item.image ||
-                    "https://via.placeholder.com/150"
+                    PLACEHOLDER_IMAGE
                   }
                   alt={item.name}
                   className="w-28 h-28 object-cover rounded-xl"
-                  onError={(e) =>
-                    (e.target.src = "https://via.placeholder.com/150")
-                  }
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = PLACEHOLDER_IMAGE;
+                  }}
                 />
 
                 {/* Details */}

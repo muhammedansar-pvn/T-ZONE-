@@ -1,10 +1,10 @@
-// Import Firebase core
+
 import { initializeApp } from "firebase/app";
 
-// Import Authentication
+
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
 
-// Firebase config
+
 const firebaseConfig = {
   apiKey: "AIzaSyDYq_-lfGfzvmCrOcDgGYOdHQlCaRBlpRQ",
   authDomain: "t-zone-f06ca.firebaseapp.com",
@@ -15,11 +15,11 @@ const firebaseConfig = {
   measurementId: "G-ETMGGJXBJD"
 };
 
-// Initialize Firebase
+
 const app = initializeApp(firebaseConfig);
 
-// Authentication
+
 export const auth = getAuth(app);
 
-// Google provider
+
 export const googleProvider = new GoogleAuthProvider();

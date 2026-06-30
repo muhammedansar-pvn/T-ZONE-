@@ -1,9 +1,9 @@
 
 
-// Layout Components
+
 import Footer from "./Components/Footer";
 
-// Context Providers
+
 import { CartProvider } from "./Context/CartContext";
 import { SearchProvider } from "./Context/SearchContext";
 import { ThemeProvider } from "./Context/ThemeContext";

@@ -1,4 +1,4 @@
-// src/admin/layout/AdminLayout.jsx
+
 
 import { useState } from "react";
 import Sidebar from "./Sidebar";

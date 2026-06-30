@@ -106,42 +106,42 @@ const OrdersManagement = () => {
 
     /* ================= STOCK UPDATE ================= */
 
-    // if (newStatus === "Delivered" && !order.stockUpdated) {
+    
 
-    //   try {
+    
 
-    //     const res = await fetch(
-    //       `${BASE_URL}/products/${product.productId}`
-    //     );
+    
+    
+    
 
-    //     if (!res.ok) return;
+    
 
-    //     const productData = await res.json();
+    
 
-    //     if (!productData) return;
+    
 
-    //     const newStock = Math.max(
-    //       (productData.stock || 0) - product.quantity,
-    //       0
-    //     );
+    
+    
+    
+    
 
-    //     await fetch(
-    //       `${BASE_URL}/products/${product.productId}`,
-    //       {
-    //         method: "PATCH",
-    //         headers: {
-    //           "Content-Type": "application/json",
-    //         },
-    //         body: JSON.stringify({
-    //           stock: newStock,
-    //         }),
-    //       }
-    //     );
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 
-    //   } catch (err) {
-    //     console.error("Stock update failed:", err);
-    //   }
-    // }
+    
+    
+    
+    
 
     /* ================= COD PAYMENT UPDATE ================= */
 

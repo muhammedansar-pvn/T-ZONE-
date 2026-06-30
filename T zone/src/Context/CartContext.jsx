@@ -10,7 +10,7 @@ export const CartProvider = ({ children }) => {
   const [cart, setCart] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  // ✅ Load Cart from Database on Login
+  
   useEffect(() => {
     const fetchCart = async () => {
       if (!user) {
@@ -33,7 +33,7 @@ export const CartProvider = ({ children }) => {
     fetchCart();
   }, [user]);
 
-  // ================= ADD TO CART =================
+  
   const addToCart = async (product) => {
     if (!user) {
       alert("Please login first");
@@ -46,11 +46,11 @@ export const CartProvider = ({ children }) => {
     }
 
     try {
-      // Optimistic Update
+      
       setCart((prevCart) => {
         const existing = prevCart.find((item) => item._id === product._id);
         if (existing) {
-          return prevCart; // Already in cart
+          return prevCart; 
         }
         return [...prevCart, { ...product, quantity: 1 }];
       });
@@ -58,16 +58,16 @@ export const CartProvider = ({ children }) => {
       await API.post("/cart", { productId: product._id, quantity: 1 });
     } catch (error) {
       console.error("Failed to add to cart:", error);
-      // Re-sync on failure
+      
       const res = await API.get("/cart");
       if (res.data?.success) setCart(res.data.cart);
     }
   };
 
-  // ================= REMOVE =================
+  
   const removeFromCart = async (id) => {
     try {
-      // Optimistic Update
+      
       setCart((prev) => prev.filter((item) => item._id !== id));
       await API.delete(`/cart/${id}`);
     } catch (error) {
@@ -77,11 +77,11 @@ export const CartProvider = ({ children }) => {
     }
   };
 
-  // ================= UPDATE =================
+  
   const updateQuantity = async (id, newQuantity) => {
     if (newQuantity < 1) return;
 
-    // Check stock check locally first
+    
     const item = cart.find((item) => item._id === id);
     if (item && newQuantity > item.stock) {
       alert(`Only ${item.stock} items available`);
@@ -89,7 +89,7 @@ export const CartProvider = ({ children }) => {
     }
 
     try {
-      // Optimistic Update
+      
       setCart((prev) =>
         prev.map((item) =>
           item._id === id ? { ...item, quantity: newQuantity } : item
@@ -104,7 +104,7 @@ export const CartProvider = ({ children }) => {
     }
   };
 
-  // ================= CLEAR =================
+  
   const clearCart = async () => {
     try {
       setCart([]);
@@ -114,7 +114,7 @@ export const CartProvider = ({ children }) => {
     }
   };
 
-  // ================= TOTALS =================
+  
   const totalItems = cart.reduce((acc, item) => acc + item.quantity, 0);
 
   const totalPrice = cart.reduce(

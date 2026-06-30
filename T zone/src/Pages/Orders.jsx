@@ -22,21 +22,21 @@ const Orders = () => {
   const [filter, setFilter] = useState("All");
   const [sort, setSort] = useState("Newest");
 
-  // 🔐 Protect Route
+  
   useEffect(() => {
     if (!user) {
       navigate("/login");
     }
   }, [user, navigate]);
 
-  // 💰 Order Total
+  
   const getOrderTotal = useCallback((order) => {
     return (order?.products || []).reduce((sum, product) => {
       return sum + Number(product.price || 0) * Number(product.quantity || 0);
     }, 0);
   }, []);
 
-  // 🔍 Filter + Sort
+  
   const filteredOrders = useMemo(() => {
     if (!orders.length) return [];
 
@@ -68,7 +68,7 @@ const Orders = () => {
     return filtered;
   }, [orders, search, filter, sort]);
 
-  // 🚫 No user
+  
   if (!user) {
     return (
       <div className="min-h-screen bg-black text-white flex items-center justify-center">
@@ -77,7 +77,7 @@ const Orders = () => {
     );
   }
 
-  // ⏳ Loading
+  
   if (loading) {
     return (
       <div className="min-h-screen bg-black text-white flex items-center justify-center">
@@ -86,7 +86,7 @@ const Orders = () => {
     );
   }
 
-  // ❌ Error
+  
   if (error) {
     return (
       <div className="min-h-screen bg-black text-white flex items-center justify-center">
